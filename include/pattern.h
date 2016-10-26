@@ -10,14 +10,15 @@ class Pattern {
 public:
   Pattern();
   void queuePattern(std::vector<ArmAngle> pattern);
-  void erase();
   void step();
 
 private:
   ServoMotor servo_motor;
   StepperMotor stepper_motor;
-  std::vector<ArmAngle> points;
+  std::vector<std::vector<ArmAngle>> patterns;
+  std::vector<ArmAngle> current_pattern;
   int current_index;
+  int current_pattern_index;
 };
 
 #endif

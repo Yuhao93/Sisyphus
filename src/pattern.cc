@@ -9,29 +9,34 @@
 
 Pattern::Pattern() {
   current_index = 0;
+  current_pattern_index = 0;
   wiringPiSetup();
   stepper_motor.setup();
   servo_motor.setup();
 }
 
 void Pattern::queuePattern(std::vector<ArmAngle> pattern) {
-  points = pattern;
-}
-
-void Pattern::erase() {
-
+  if (patterns.empty()) {
+    current_pattern = pattern;
+    current_pattern_index = 0;
+  } 
+  patterns.push_back(pattern);
 }
 
 void Pattern::step() {
-  if (current_index >= points.size()) {
-    return;
+  if (current_pattern_index >= patterns.size()) {
+    return;  
   }
-  ArmAngle angle = points[current_index];
+  uint32_t start_time = millis();
+  if (current_index >= current_pattern.size()) {
+    current_index = 0;
+    current_pattern = patterns[++current_pattern_index];
+  }
+  ArmAngle angle = current_pattern[current_index];
   if (current_index == 0) {
     stepper_motor.moveToStart(angle.stepper_angle);
     servo_motor.moveToStart(angle.servo_angle);
   }
-  uint32_t start_time = millis();
   bool keep_going =
       servo_motor.step(angle.servo_angle)
           && stepper_motor.step(angle.stepper_angle);
