@@ -10,6 +10,9 @@ public:
   /** intialize pins */
   void setup();
 
+  /** Move to the starting angle. */
+  void moveToStart(float start);
+
   /**
    * Move to target_angle in radians (+ for colckwise, - for counter clockwise)
    * Return true if no more movement is needed, false if it needs to keep

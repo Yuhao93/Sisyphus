@@ -26,8 +26,12 @@ void Pattern::step() {
   if (current_index >= points.size()) {
     return;
   }
-  uint32_t start_time = millis();
   ArmAngle angle = points[current_index];
+  if (current_index == 0) {
+    stepper_motor.moveToStart(angle.stepper_angle);
+    servo_motor.moveToStart(angle.servo_angle);
+  }
+  uint32_t start_time = millis();
   bool keep_going =
       servo_motor.step(angle.servo_angle)
           && stepper_motor.step(angle.stepper_angle);

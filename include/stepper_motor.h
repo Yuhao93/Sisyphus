@@ -8,10 +8,13 @@
 
 class StepperMotor {
 public:
-  StepperMotor() : current_angle(0), target_angle(0) {}
+  StepperMotor() : current_angle(0) {}
 
   /** intialize pins */
   void setup();
+
+  /** Move to start angle. */
+  void moveToStart(float start);
 
   /**
    * Move target_angle radians (+ for colckwise, - for counter clockwise)
@@ -22,7 +25,6 @@ public:
 
 private:
   float current_angle;
-  float target_angle;
 };
 
 #endif

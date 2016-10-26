@@ -10,8 +10,12 @@ void StepperMotor::setup() {
   pinMode(STEPPER_MOTOR_GPIO_DIR, OUTPUT);
 }
 
+void StepperMotor::moveToStart(float start) {
+  current_angle = SisyphusUtil::ClampBetween2Pi(start);
+}
+
 bool StepperMotor::step(float target) {
-  target_angle = SisyphusUtil::ClampBetween2Pi(target);
+  float target_angle = SisyphusUtil::ClampBetween2Pi(target);
   float angle_to_step =
       SisyphusUtil::DiffBetweenAngles(target_angle, current_angle);
   if (fabs(angle_to_step) > STEPPER_MOTOR_HALF_STEP_ANGLE) {

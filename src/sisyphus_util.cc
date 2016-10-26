@@ -3,13 +3,19 @@
 #include "structs.h"
 #include <vector>
 #include <cmath>
+#include <cstdio>
 
 float SisyphusUtil::pi = 3.14159f;
 float SisyphusUtil::r = .5f;
 
 float SisyphusUtil::ClampBetween2Pi(float val) {
-  float overflow = floor(val / SisyphusUtil::pi);
-  return val - (overflow * 2 * SisyphusUtil::pi);
+  bool negative = val < 0;
+  float absVal = negative ? val * -1 : val;
+  int overflow = (int) floor(absVal / SisyphusUtil::pi);
+  if (overflow % 2 == 1) {
+    overflow++;
+  }
+  return val - ((negative ? -1 : 1) * overflow * SisyphusUtil::pi);
 }
 
 float SisyphusUtil::DiffBetweenAngles(float angle1, float angle2) {
@@ -46,12 +52,13 @@ CartesianCoordinate SisyphusUtil::CartesianFromPolar(
 
 ArmAngle SisyphusUtil::ArmAngleFromPolar(
     PolarCoordinate& coordinate) {
-  float servo_angle = 2 * asin(coordinate.r / (2 * SisyphusUtil::r));
-  float stepper_angle =
-    acos(coordinate.r / (2 * SisyphusUtil::r)) + coordinate.a;
+  float servo_angle = SisyphusUtil::ClampBetween2Pi(
+      2 * asin(coordinate.r / (2 * SisyphusUtil::r)));
+  float stepper_angle = SisyphusUtil::ClampBetween2Pi(
+      acos(coordinate.r / (2 * SisyphusUtil::r)) + coordinate.a);
   ArmAngle armAngle = {
-    SisyphusUtil::ClampBetween2Pi(stepper_angle),
-    SisyphusUtil::ClampBetween2Pi(SisyphusUtil::pi + servo_angle)
+    stepper_angle,
+    servo_angle
   };
   return armAngle;
 }

@@ -6,11 +6,12 @@
 
 namespace servo_motor_impl {
 int stepsPerMillis = 100;
-float millisSweep = 1.8f;
-int offset = stepsPerMillis * .6f;
+float millisSweep = 1.7f;
+int offset = stepsPerMillis * .7f;
 
 int stepsForServo(float angle) {
-  return offset + ((angle / SisyphusUtil::pi) * stepsPerMillis * millisSweep);
+  return offset
+    + ((angle / (2 * SisyphusUtil::pi)) * stepsPerMillis * millisSweep);
 }
 }
 
@@ -19,6 +20,10 @@ void ServoMotor::setup() {
   pwmSetMode(PWM_MODE_MS);
   pwmSetClock(192);
   pwmSetRange(2000);
+}
+
+void ServoMotor::moveToStart(float start) {
+  pwmWrite(SERVO_MOTOR_GPIO_PWM, servo_motor_impl::stepsForServo(start));
 }
 
 bool ServoMotor::step(float target_angle) {
