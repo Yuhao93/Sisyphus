@@ -7,28 +7,29 @@
       var polar = [];
       var target = [];
       var sideLength = 350;
-      for (var i = 0; i < 100; i++) {
+      var range = 500;
+      for (var i = 0; i < range; i++) {
         target.push({
-          'x': -sideLength / 2 + (i * sideLength / 100),
+          'x': -sideLength / 2 + (i * sideLength / range),
           'y': -sideLength / 2
         });
       }
-      for (var i = 0; i < 100; i++) {
+      for (var i = 0; i < range; i++) {
         target.push({
           'x': sideLength / 2,
-          'y': -sideLength / 2 + (i * sideLength / 100)
+          'y': -sideLength / 2 + (i * sideLength / range)
         });
       }
-      for (var i = 0; i < 100; i++) {
+      for (var i = 0; i < range; i++) {
         target.push({
-          'x': sideLength / 2 - (i * sideLength / 100),
+          'x': sideLength / 2 - (i * sideLength / range),
           'y': sideLength / 2
         });
       }
-      for (var i = 0; i < 100; i++) {
+      for (var i = 0; i < range; i++) {
         target.push({
           'x': -sideLength / 2,
-          'y': sideLength / 2 - (i * sideLength / 100)
+          'y': sideLength / 2 - (i * sideLength / range)
         });
       }
       for (var i = 0; i < target.length; i++) {
@@ -80,9 +81,9 @@
         if (++index >= square.length) {
           index = 0;
         }
-        setTimeout(drawCanvas, 100);
+        setTimeout(drawCanvas, 10000 / range);
       }
-      setTimeout(drawCanvas, 100);
+      setTimeout(drawCanvas, 10000 / range);
     </script>
   </body>
 </html>
