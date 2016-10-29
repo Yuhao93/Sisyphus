@@ -1,11 +1,11 @@
 #include "pattern.h"
 #include "sisyphus_util.h"
 #include "structs.h"
+#include "threads.h"
 #include <vector>
 #include <cstdio>
 
 int main() {
-  printf("Initializing Pattern\n");
   Pattern pattern;
 
   std::vector<CartesianCoordinate> square;
@@ -43,11 +43,12 @@ int main() {
   for (auto it = square.begin(); it != square.end(); it++) {
     angles.push_back(SisyphusUtil::ArmAngleFromCartesian(*it));
   }
-  printf("Finished Initializing Pattern\n");
   pattern.queuePattern(angles);
-  printf("Running...\n");
+
+  Threads::Start(&pattern);
+
   while(true) {
-    pattern.step();
+    
   }
   return 0;
 }

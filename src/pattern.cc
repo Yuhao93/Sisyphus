@@ -16,27 +16,37 @@ Pattern::Pattern() {
 }
 
 void Pattern::queuePattern(std::vector<ArmAngle> pattern) {
+  lock.lock();
   if (patterns.empty()) {
+    patterns.push_back(pattern);
     current_pattern = pattern;
     current_pattern_index = 0;
-  } 
-  patterns.push_back(pattern);
+  } else {
+    patterns.insert(patterns.begin() + current_pattern_index, pattern);
+    // Can't overflow
+    current_pattern_index++;
+    current_pattern = patterns[current_pattern_index];
+  }
+  lock.unlock();
 }
 
 void Pattern::step() {
-  if (current_pattern_index >= patterns.size()) {
-    return;  
-  }
-  uint32_t start_time = millis();
+  uint32_t last_step_time = millis();
+  lock.lock();
   if (current_index >= current_pattern.size()) {
     current_index = 0;
-    current_pattern = patterns[++current_pattern_index];
+    if (++current_pattern_index >= patterns.size()) {
+      current_pattern_index = 0;
+    }
+    current_pattern = patterns[current_pattern_index];
   }
   ArmAngle angle = current_pattern[current_index];
   if (current_index == 0) {
     stepper_motor.moveToStart(angle.stepper_angle);
     servo_motor.moveToStart(angle.servo_angle);
   }
+  current_index++;
+  lock.unlock();
   bool keep_going =
       servo_motor.step(angle.servo_angle)
           && stepper_motor.step(angle.stepper_angle);
@@ -45,9 +55,8 @@ void Pattern::step() {
         servo_motor.step(angle.servo_angle)
             && stepper_motor.step(angle.stepper_angle);
   }
-  uint32_t diff = millis() - start_time;
+  uint32_t diff = millis() - last_step_time;
   if (diff < 100) {
     delay(100 - diff);
   }
-  current_index++;
 }
