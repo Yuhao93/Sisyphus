@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package sisyphus;
+
+message Pattern {
+  repeated ArmAngle arm_angles = 1;
+}
+
+message ArmAngle {
+  optional float servo_angle = 1;
+  optional float stepper_angle = 2;
+}
+
+message CartesianCoordinate {
+  optional float x = 1;
+  optional float y = 2;
+}
+
+message PolarCoordinate {
+  optional float r = 1;
+  optional float a = 2;
+}

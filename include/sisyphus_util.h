@@ -1,17 +1,21 @@
 #ifndef SISYPHUS_UTIL_H
 #define SISYPHUS_UTIL_H
 
-#include "structs.h"
+#include "model.pb.h"
 
 namespace SisyphusUtil {
 extern float pi;
 extern float r;
 float ClampBetween2Pi(float val);
 float DiffBetweenAngles(float angle1, float angle2);
-PolarCoordinate PolarFromCartesian(CartesianCoordinate& coordinate);
-CartesianCoordinate CartesianFromPolar(PolarCoordinate& coordinate);
-ArmAngle ArmAngleFromPolar(PolarCoordinate& coordinate);
-ArmAngle ArmAngleFromCartesian(CartesianCoordinate& coordinate);
+sisyphus::PolarCoordinate PolarFromCartesian(
+    sisyphus::CartesianCoordinate& coordinate);
+sisyphus::CartesianCoordinate CartesianFromPolar(
+    sisyphus::PolarCoordinate& coordinate);
+sisyphus::ArmAngle ArmAngleFromPolar(
+    sisyphus::PolarCoordinate& coordinate);
+sisyphus::ArmAngle ArmAngleFromCartesian(
+    sisyphus::CartesianCoordinate& coordinate);
 }
 
 #endif

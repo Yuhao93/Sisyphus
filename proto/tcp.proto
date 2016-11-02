@@ -1,0 +1,56 @@
+syntax = "proto2";
+
+import "model.proto";
+
+package sisyphus;
+
+message GetRequest {
+  optional bool get_patterns = 1 [default = false];
+  optional bool get_intensity = 2 [default = false];
+}
+
+message GetResponse {
+  optional GetPatternsResponse patterns = 1;
+  optional GetIntensityResponse intensity = 2;
+}
+
+message GetPatternsResponse {
+  repeated sisyphus.Pattern patterns = 1;
+}
+
+message GetIntensityResponse {
+  optional float intensity = 1;
+}
+
+message SetRequest {
+  optional AddPatternRequest add_pattern = 1;
+  optional RemovePatternRequest remove_pattern = 2;
+  optional SetIntensityRequest intensity = 3;
+}
+
+message SetResponse {
+  optional bool action_performed = 1;
+}
+
+message SetIntensityRequest {
+  optional float intensity = 1;
+}
+
+message AddPatternRequest {
+  optional sisyphus.Pattern pattern = 1;
+  optional int32 position = 2 [default = -1];
+}
+
+message RemovePatternRequest {
+  optional int32 position = 1 [default = -1];
+}
+
+message Request {
+  optional GetRequest get = 1;
+  optional SetRequest set = 2;
+}
+
+message Response {
+  optional GetResponse get = 1;
+  optional SetResponse set = 2;
+}

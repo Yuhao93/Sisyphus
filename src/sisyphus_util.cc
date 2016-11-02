@@ -1,6 +1,6 @@
 #include "sisyphus_util.h"
 
-#include "structs.h"
+#include "model.pb.h"
 #include <vector>
 #include <cmath>
 #include <cstdio>
@@ -30,41 +30,45 @@ float SisyphusUtil::DiffBetweenAngles(float angle1, float angle2) {
   return diff;
 }
 
-PolarCoordinate SisyphusUtil::PolarFromCartesian(
-    CartesianCoordinate& coordinate) {
-  float x = coordinate.x;
-  float y = coordinate.y;
+sisyphus::PolarCoordinate SisyphusUtil::PolarFromCartesian(
+    sisyphus::CartesianCoordinate& coordinate) {
+  float x = coordinate.x();
+  float y = coordinate.y();
   float r = sqrt(x * x + y * y);
   float a = atan2(y, x);
-  PolarCoordinate new_coordinate = { r, a };
+  sisyphus::PolarCoordinate new_coordinate;
+  new_coordinate.set_r(r);
+  new_coordinate.set_a(a);
   return new_coordinate;
 }
 
-CartesianCoordinate SisyphusUtil::CartesianFromPolar(
-    PolarCoordinate& coordinate) {
-  float r = coordinate.r;
-  float a = coordinate.a;
+sisyphus::CartesianCoordinate SisyphusUtil::CartesianFromPolar(
+    sisyphus::PolarCoordinate& coordinate) {
+  float r = coordinate.r();
+  float a = coordinate.a();
   float x = r * cos(a);
   float y = r * sin(a);
-  CartesianCoordinate new_coordinate = { x, y };
+  sisyphus::CartesianCoordinate new_coordinate;
+  new_coordinate.set_x(x);
+  new_coordinate.set_y(y);
   return new_coordinate;
 }
 
-ArmAngle SisyphusUtil::ArmAngleFromPolar(
-    PolarCoordinate& coordinate) {
+sisyphus::ArmAngle SisyphusUtil::ArmAngleFromPolar(
+    sisyphus::PolarCoordinate& coordinate) {
   float servo_angle = SisyphusUtil::ClampBetween2Pi(
-      2 * asin(coordinate.r / (2 * SisyphusUtil::r)));
+      2 * asin(coordinate.r() / (2 * SisyphusUtil::r)));
   float stepper_angle = SisyphusUtil::ClampBetween2Pi(
-      acos(coordinate.r / (2 * SisyphusUtil::r)) + coordinate.a);
-  ArmAngle armAngle = {
-    stepper_angle,
-    servo_angle
-  };
-  return armAngle;
+      acos(coordinate.r() / (2 * SisyphusUtil::r)) + coordinate.a());
+  sisyphus::ArmAngle arm_angle;
+  arm_angle.set_stepper_angle(stepper_angle);
+  arm_angle.set_servo_angle(servo_angle);
+  return arm_angle;
 }
 
-ArmAngle SisyphusUtil::ArmAngleFromCartesian(
-    CartesianCoordinate& coordinate) {
-  PolarCoordinate polar = SisyphusUtil::PolarFromCartesian(coordinate);
+sisyphus::ArmAngle SisyphusUtil::ArmAngleFromCartesian(
+    sisyphus::CartesianCoordinate& coordinate) {
+  sisyphus::PolarCoordinate polar =
+      SisyphusUtil::PolarFromCartesian(coordinate);
   return ArmAngleFromPolar(polar);
 }

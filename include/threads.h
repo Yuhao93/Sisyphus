@@ -1,16 +1,16 @@
 #ifndef THREADS_H
 #define THREADS_H
 
-#include "pattern.h"
-#include "structs.h"
+#include "pattern_manager.h"
+#include "model.pb.h"
 #include <thread>
 #include <vector>
 
 namespace Threads {
-  void QueuePattern(std::vector<ArmAngle>& pattern);
-  void Start(Pattern* pattern);
+  void QueuePattern(std::vector<sisyphus::ArmAngle>& pattern);
+  void Start(PatternManager* pattern_manager);
 
-  extern Pattern* pattern;
+  extern PatternManager* pattern_manager;
   extern std::vector<std::thread> threads;
 }
 
