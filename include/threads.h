@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace Threads {
-  void QueuePattern(std::vector<sisyphus::ArmAngle>& pattern);
+  void QueuePattern(sisyphus::Pattern pattern);
   void Start(PatternManager* pattern_manager);
 
   extern PatternManager* pattern_manager;

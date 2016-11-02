@@ -26,7 +26,7 @@ namespace ThreadsImpl {
 PatternManager* Threads::pattern_manager;
 std::vector<std::thread> Threads::threads;
 
-void Threads::QueuePattern(std::vector<sisyphus::ArmAngle>& pattern) {
+void Threads::QueuePattern(sisyphus::Pattern pattern) {
   if (Threads::pattern_manager != nullptr) {
     Threads::pattern_manager->queuePattern(pattern);
   }

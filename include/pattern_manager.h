@@ -13,15 +13,20 @@ public:
   /**
    * Adds a pattern into the end of the circular buffer of patterns.
    */
-  void queuePattern(std::vector<sisyphus::ArmAngle> pattern);
+  void queuePattern(sisyphus::Pattern pattern);
+
+  /**
+   * List patterns
+   */
+  std::vector<sisyphus::Pattern> listPatterns();
 
   void step();
 
 private:
   ServoMotor servo_motor;
   StepperMotor stepper_motor;
-  std::vector<std::vector<sisyphus::ArmAngle>> patterns;
-  std::vector<sisyphus::ArmAngle> current_pattern;
+  std::vector<sisyphus::Pattern> patterns;
+  sisyphus::Pattern current_pattern;
   std::mutex lock;
   int current_index;
   int current_pattern_index;

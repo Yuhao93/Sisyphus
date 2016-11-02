@@ -7,7 +7,6 @@
 
 int main() {
   PatternManager patternManager;
-
   std::vector<sisyphus::CartesianCoordinate> square;
   float side_length = 1.4f;
   int sample_per_side = 100;
@@ -35,11 +34,11 @@ int main() {
     coordinate.set_y(side_length / 2 - (i * side_length / sample_per_side));
     square.push_back(coordinate);
   }
-  std::vector<sisyphus::ArmAngle> angles;
+  sisyphus::Pattern pattern;
   for (auto it = square.begin(); it != square.end(); it++) {
-    angles.push_back(SisyphusUtil::ArmAngleFromCartesian(*it));
+    pattern.add_arm_angles()->CopyFrom(SisyphusUtil::ArmAngleFromCartesian(*it));
   }
-  patternManager.queuePattern(angles);
+  patternManager.queuePattern(pattern);
 
   Threads::Start(&patternManager);
 

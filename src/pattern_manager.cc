@@ -15,7 +15,7 @@ PatternManager::PatternManager() {
   servo_motor.setup();
 }
 
-void PatternManager::queuePattern(std::vector<sisyphus::ArmAngle> pattern) {
+void PatternManager::queuePattern(sisyphus::Pattern pattern) {
   lock.lock();
   if (patterns.empty()) {
     patterns.push_back(pattern);
@@ -30,17 +30,27 @@ void PatternManager::queuePattern(std::vector<sisyphus::ArmAngle> pattern) {
   lock.unlock();
 }
 
+std::vector<sisyphus::Pattern> PatternManager::listPatterns() {
+  std::vector<sisyphus::Pattern> patterns_copy;
+  lock.lock();
+  for (auto it = patterns.begin(); it != patterns.end(); it++) {
+    patterns_copy.push_back(*it);
+  }
+  lock.unlock();
+  return patterns_copy;
+}
+
 void PatternManager::step() {
   uint32_t last_step_time = millis();
   lock.lock();
-  if (current_index >= current_pattern.size()) {
+  if (current_index >= current_pattern.arm_angles().size()) {
     current_index = 0;
     if (++current_pattern_index >= patterns.size()) {
       current_pattern_index = 0;
     }
     current_pattern = patterns[current_pattern_index];
   }
-  sisyphus::ArmAngle angle = current_pattern[current_index];
+  sisyphus::ArmAngle angle = current_pattern.arm_angles(current_index);
   if (current_index == 0) {
     stepper_motor.moveToStart(angle.stepper_angle());
     servo_motor.moveToStart(angle.servo_angle());

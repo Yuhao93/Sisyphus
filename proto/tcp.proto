@@ -4,6 +4,16 @@ import "model.proto";
 
 package sisyphus;
 
+message Request {
+  optional GetRequest get = 1;
+  optional SetRequest set = 2;
+}
+
+message Response {
+  optional GetResponse get = 1;
+  optional SetResponse set = 2;
+}
+
 message GetRequest {
   optional bool get_patterns = 1 [default = false];
   optional bool get_intensity = 2 [default = false];
@@ -29,7 +39,9 @@ message SetRequest {
 }
 
 message SetResponse {
-  optional bool action_performed = 1;
+  optional bool pattern_added = 1;
+  optional bool pattern_removed = 2;
+  optional bool intensity_set = 3;
 }
 
 message SetIntensityRequest {
@@ -43,14 +55,4 @@ message AddPatternRequest {
 
 message RemovePatternRequest {
   optional int32 position = 1 [default = -1];
-}
-
-message Request {
-  optional GetRequest get = 1;
-  optional SetRequest set = 2;
-}
-
-message Response {
-  optional GetResponse get = 1;
-  optional SetResponse set = 2;
 }
