@@ -5,13 +5,13 @@
 #include <cstdio>
 
 namespace servo_motor_impl {
-int stepsPerMillis = 100;
-float millisSweep = 1.7f;
-int offset = stepsPerMillis * .7f;
+int min = 70;
+int max = 238;
+int sweep = max - min;
 
 int stepsForServo(float angle) {
   return offset
-    + ((angle / (2 * SisyphusUtil::pi)) * stepsPerMillis * millisSweep);
+    + ((angle / (2 * SisyphusUtil::pi)) * sweep);
 }
 }
 
