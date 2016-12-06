@@ -1,6 +1,6 @@
 #include "led.h"
 
-#include <wiringPi.h>
+#include "wiring_pi_wrapper.h"
 #include <softPwm.h>
 
 void Led::setup() {

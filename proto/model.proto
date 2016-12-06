@@ -3,12 +3,26 @@ syntax = "proto2";
 package sisyphus;
 
 message Pattern {
-  repeated ArmAngle arm_angles = 1;
+  repeated Segment path_segment = 1;
 }
 
-message ArmAngle {
-  optional float servo_angle = 1;
-  optional float stepper_angle = 2;
+message Segment {
+  message Point {
+    optional int32 angular_value = 1;
+    optional int32 linear_value = 2;
+  }
+  optional Point start = 1;
+  optional Point end = 2;
+}
+
+message Step {
+  enum Movement {
+    FORWARDS = 1;
+    BACKWORDS = 2;
+    STOP = 3;
+  }
+  optional Movement angular_movement = 1;
+  optional Movement linear_movement = 2;
 }
 
 message CartesianCoordinate {
@@ -19,4 +33,26 @@ message CartesianCoordinate {
 message PolarCoordinate {
   optional float r = 1;
   optional float a = 2;
+}
+
+// A pattern that can be stored and is agnostic to the specs of a
+// specific table. Can be stored in one of two formats.
+// Values can be interpolated, resampled, and rescaled into a Pattern for a
+// specific table's specs
+message StoredPattern {
+  oneof storage_type {
+    // Angular values are between 0 and 2pi
+    // Linear values are between 0 (center) and 1 (edge)
+    CartesianPattern cartesian = 1;
+    // Values are all between -1 and 1
+    PolarPattern polar = 2;
+  }
+}
+
+message CartesianPattern {
+  repeated CartesianCoordinate coordinate = 1;
+}
+
+message PolarPattern {
+  repeated PolarCoordinate coordinate = 1;
 }

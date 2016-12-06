@@ -1,37 +1,48 @@
 #include "sisyphus_util.h"
 
 #include "model.pb.h"
+#include "table_constants.h"
 #include <vector>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
+
+namespace {
+void polar_to_point(
+    sisyphus::Segment_Point* point,
+    const sisyphus::PolarCoordinate& polar) {
+  point->set_angular_value(
+      (int) (ANGULAR_STEPS_PER_REVOLUTION *
+          SisyphusUtil::ClampBetween2Pi(polar.a())));
+  point->set_linear_value((int) (LINEAR_STEPS_PER_SWEEP * polar.r()));
+}
+}
 
 float SisyphusUtil::pi = 3.14159f;
 float SisyphusUtil::r = .5f;
 
 float SisyphusUtil::ClampBetween2Pi(float val) {
-  bool negative = val < 0;
-  float absVal = negative ? val * -1 : val;
-  int overflow = (int) floor(absVal / SisyphusUtil::pi);
-  if (overflow % 2 == 1) {
-    overflow++;
+  float pi_2 = 2 * SisyphusUtil::pi;
+  if (val < 0) {
+    int cycles = (int) (-val / pi_2);
+    return val + (cycles + 1) * pi_2;
+  } else if (val >= pi_2) {
+    int cycles = (int) (val / pi_2);
+    return val - cycles * pi_2;
   }
-  return val - ((negative ? -1 : 1) * overflow * SisyphusUtil::pi);
+  return val;
 }
 
-float SisyphusUtil::DiffBetweenAngles(float angle1, float angle2) {
-  float diff = angle1 - angle2;
-  if (fabs(diff) > SisyphusUtil::pi) {
-    if (diff < 0) {
-      return (2 * SisyphusUtil::pi) + diff;
-    } else if (diff > 0) {
-      return diff - (2 * SisyphusUtil::pi);
-    }
-  }
-  return diff;
+int SisyphusUtil::DiffBetweenAngles(int angle1, int angle2) {
+  int diff = angle1 - angle2;
+  int diff_magnitude = abs(diff);
+  return diff_magnitude > (ANGULAR_STEPS_PER_REVOLUTION / 2)
+      ? (ANGULAR_STEPS_PER_REVOLUTION - diff_magnitude) * (diff < 0 ? -1 : 1)
+      : diff;
 }
 
 sisyphus::PolarCoordinate SisyphusUtil::PolarFromCartesian(
-    sisyphus::CartesianCoordinate& coordinate) {
+    const sisyphus::CartesianCoordinate& coordinate) {
   float x = coordinate.x();
   float y = coordinate.y();
   float r = sqrt(x * x + y * y);
@@ -42,33 +53,21 @@ sisyphus::PolarCoordinate SisyphusUtil::PolarFromCartesian(
   return new_coordinate;
 }
 
-sisyphus::CartesianCoordinate SisyphusUtil::CartesianFromPolar(
-    sisyphus::PolarCoordinate& coordinate) {
-  float r = coordinate.r();
-  float a = coordinate.a();
-  float x = r * cos(a);
-  float y = r * sin(a);
-  sisyphus::CartesianCoordinate new_coordinate;
-  new_coordinate.set_x(x);
-  new_coordinate.set_y(y);
-  return new_coordinate;
+sisyphus::Segment SisyphusUtil::SegmentFromPolarCoordinates(
+    const sisyphus::PolarCoordinate& start,
+    const sisyphus::PolarCoordinate& end) {
+  sisyphus::Segment segment;
+  sisyphus::Segment_Point* start_point = segment.mutable_start();
+  sisyphus::Segment_Point* end_point = segment.mutable_end();
+  polar_to_point(start_point, start);
+  polar_to_point(end_point, end);
+  return segment;
 }
 
-sisyphus::ArmAngle SisyphusUtil::ArmAngleFromPolar(
-    sisyphus::PolarCoordinate& coordinate) {
-  float servo_angle = SisyphusUtil::ClampBetween2Pi(
-      2 * asin(coordinate.r() / (2 * SisyphusUtil::r)));
-  float stepper_angle = SisyphusUtil::ClampBetween2Pi(
-      acos(coordinate.r() / (2 * SisyphusUtil::r)) + coordinate.a());
-  sisyphus::ArmAngle arm_angle;
-  arm_angle.set_stepper_angle(stepper_angle);
-  arm_angle.set_servo_angle(servo_angle);
-  return arm_angle;
-}
-
-sisyphus::ArmAngle SisyphusUtil::ArmAngleFromCartesian(
-    sisyphus::CartesianCoordinate& coordinate) {
-  sisyphus::PolarCoordinate polar =
-      SisyphusUtil::PolarFromCartesian(coordinate);
-  return ArmAngleFromPolar(polar);
+sisyphus::Segment SisyphusUtil::SegmentFromCartesianCoordinates(
+    const sisyphus::CartesianCoordinate& start,
+    const sisyphus::CartesianCoordinate& end) {
+  return SisyphusUtil::SegmentFromPolarCoordinates(
+      SisyphusUtil::PolarFromCartesian(start),
+      SisyphusUtil::PolarFromCartesian(end));
 }

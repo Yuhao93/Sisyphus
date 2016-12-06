@@ -1,6 +1,6 @@
 #include "softPwm.h"
 
-#include "wiringPi.h"
+#include "wiring_pi_wrapper.h"
 #include <cstdio>
 
 namespace SoftPwmImpl {

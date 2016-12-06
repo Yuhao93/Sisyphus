@@ -1,4 +1,4 @@
-#include "wiringPi.h"
+#include "wiring_pi_wrapper.h"
 
 #include <chrono>
 #include <cstdio>
@@ -62,7 +62,7 @@ void pinMode(int pin, int mode) {
   wiringPiImpl::pinModes[pin] = mode;
   if (WIRING_PI_DEBUG) {
     const char* mode_str = "";
-    if (mode == OUTPUT) {
+    if (mode == WIRING_PI_OUTPUT) {
       mode_str = "OUTPUT";
     } else {
       mode_str = "OUTPUT_PWM";
@@ -79,6 +79,10 @@ void digitalWrite(int pin, int value) {
   if (WIRING_PI_DEBUG) {
     printf("[WiringPi DEBUG]: Wrote %d to pin %d\n", value, pin);
   }
+}
+
+int digitalRead(int pin) {
+  return HIGH;
 }
 
 int millis() {

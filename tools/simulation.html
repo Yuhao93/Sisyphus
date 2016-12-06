@@ -6,8 +6,9 @@
       var square = [];
       var polar = [];
       var target = [];
-      var sideLength = 350;
+      var sideLength = 250;
       var range = 500;
+      /*
       for (var i = 0; i < range; i++) {
         target.push({
           'x': -sideLength / 2 + (i * sideLength / range),
@@ -31,6 +32,34 @@
           'x': -sideLength / 2,
           'y': sideLength / 2 - (i * sideLength / range)
         });
+      }
+      */
+      for (var i = 0; i < range; i++) {
+        var x1 = 0;
+        var y1 = -sideLength;
+        var x2 = .866 * sideLength;
+        var y2 = sideLength * .5;
+        var x3 = -.866 * sideLength;
+        var y3 = sideLength * .5;
+        if (i < range / 3) {
+          var progress = i * 3 / range;
+          target.push({
+            'x': x2 * progress + (1 - progress) * x1,
+            'y': y2 * progress + (1 - progress) * y1,
+          });
+        } else if (i < range * 2 / 3) {
+          var progress = (i - range / 3) * 3 / range;
+          target.push({
+            'x': x3 * progress + (1 - progress) * x2,
+            'y': y3 * progress + (1 - progress) * y2,
+          });
+        } else {
+          var progress = (i - 2 * range / 3) * 3 / range;
+          target.push({
+            'x': x1 * progress + (1 - progress) * x3,
+            'y': y1 * progress + (1 - progress) * y3,
+          });
+        }
       }
       for (var i = 0; i < target.length; i++) {
         var coordinate = target[i];

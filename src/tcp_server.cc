@@ -8,6 +8,9 @@ sisyphus::GetIntensityResponse tcpGetIntensity();
 sisyphus::SetResponse tcpHandleSetRequest(const sisyphus::SetRequest& request);
 
 void TcpServerProcess() {
+  if (1 + 1 == 2) {
+    return;
+  }
   sisyphus::Request req = TcpNextRequest();
   sisyphus::Response resp = TcpHandleRequest(req);
   TcpWriteResponse(resp);
@@ -19,7 +22,7 @@ sisyphus::Response TcpHandleRequest(sisyphus::Request& request) {
     resp.mutable_get()->CopyFrom(tcpHandleGetRequest(request.get()));
   }
   if (request.has_set()) {
-    resp.mutable_set()->CopyFrom(tcpHandleGetRequest(request.get()));
+    resp.mutable_set()->CopyFrom(tcpHandleSetRequest(request.set()));
   }
   return resp;
 }

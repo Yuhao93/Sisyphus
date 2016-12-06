@@ -7,38 +7,18 @@
 
 int main() {
   PatternManager patternManager;
-  std::vector<sisyphus::CartesianCoordinate> square;
-  float side_length = 1.4f;
-  int sample_per_side = 100;
-  for (int i = 0; i < sample_per_side; i++) {
-    sisyphus::CartesianCoordinate coordinate;
-    coordinate.set_x(-side_length / 2 + (i * side_length / sample_per_side));
-    coordinate.set_y(-side_length / 2);
-    square.push_back(coordinate);
-  }
-  for (int i = 0; i < sample_per_side; i++) {
-    sisyphus::CartesianCoordinate coordinate;
-    coordinate.set_x(side_length / 2);
-    coordinate.set_y(-side_length / 2 + (i * side_length / sample_per_side));
-    square.push_back(coordinate);
-  }
-  for (int i = 0; i < sample_per_side; i++) {
-    sisyphus::CartesianCoordinate coordinate;
-    coordinate.set_x(side_length / 2 - (i * side_length / sample_per_side));
-    coordinate.set_y(side_length / 2);
-    square.push_back(coordinate);
-  }
-  for (int i = 0; i < sample_per_side; i++) {
-    sisyphus::CartesianCoordinate coordinate;
-    coordinate.set_x(-side_length / 2);
-    coordinate.set_y(side_length / 2 - (i * side_length / sample_per_side));
-    square.push_back(coordinate);
-  }
   sisyphus::Pattern pattern;
-  for (auto it = square.begin(); it != square.end(); it++) {
-    pattern.add_arm_angles()->CopyFrom(SisyphusUtil::ArmAngleFromCartesian(*it));
+  for (int i = 0; i < 1000; i++) {
+    sisyphus::PolarCoordinate start;
+    sisyphus::PolarCoordinate end;
+    start.set_a(2 * SisyphusUtil::pi * i / 500.0f);
+    start.set_r(.5f);
+    end.set_a(2 * SisyphusUtil::pi * (i + 1) / 500.0f);
+    end.set_r(.5f);
+    pattern.add_path_segment()->CopyFrom(
+        SisyphusUtil::SegmentFromPolarCoordinates(start, end));
   }
-  patternManager.queuePattern(pattern);
+  patternManager.queue_pattern(pattern);
 
   Threads::Start(&patternManager);
 

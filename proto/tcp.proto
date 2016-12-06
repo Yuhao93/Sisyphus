@@ -25,7 +25,7 @@ message GetResponse {
 }
 
 message GetPatternsResponse {
-  repeated sisyphus.Pattern patterns = 1;
+  repeated sisyphus.StoredPattern patterns = 1;
 }
 
 message GetIntensityResponse {
@@ -49,7 +49,7 @@ message SetIntensityRequest {
 }
 
 message AddPatternRequest {
-  optional sisyphus.Pattern pattern = 1;
+  optional sisyphus.StoredPattern pattern = 1;
   optional int32 position = 2 [default = -1];
 }
 

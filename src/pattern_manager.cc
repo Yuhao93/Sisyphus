@@ -1,72 +1,55 @@
 #include "pattern_manager.h"
 
-#include "servo_motor.h"
 #include "sisyphus_util.h"
-#include "stepper_motor.h"
+#include "stepper_motors.h"
 #include "model.pb.h"
-#include "wiringPi.h"
+#include "pattern_wrapper.h"
+#include "wiring_pi_wrapper.h"
 #include <cstdint>
 
-PatternManager::PatternManager() {
-  current_index = 0;
-  current_pattern_index = 0;
+PatternManager::PatternManager() : pattern_index(0) {
   wiringPiSetup();
-  stepper_motor.setup();
-  servo_motor.setup();
+  stepper_motors.setup();
 }
 
-void PatternManager::queuePattern(sisyphus::Pattern pattern) {
+void PatternManager::queue_pattern(sisyphus::Pattern pattern) {
   lock.lock();
   if (patterns.empty()) {
     patterns.push_back(pattern);
-    current_pattern = pattern;
-    current_pattern_index = 0;
+    pattern_index = 0;
   } else {
-    patterns.insert(patterns.begin() + current_pattern_index, pattern);
-    // Can't overflow
-    current_pattern_index++;
-    current_pattern = patterns[current_pattern_index];
+    patterns.push_back(pattern);
+    pattern_index++;
   }
   lock.unlock();
 }
 
-std::vector<sisyphus::Pattern> PatternManager::listPatterns() {
+std::vector<sisyphus::Pattern> PatternManager::list_patterns() {
   std::vector<sisyphus::Pattern> patterns_copy;
   lock.lock();
   for (auto it = patterns.begin(); it != patterns.end(); it++) {
-    patterns_copy.push_back(*it);
+    patterns_copy.push_back(it->pattern());
   }
   lock.unlock();
   return patterns_copy;
 }
 
 void PatternManager::step() {
-  uint32_t last_step_time = millis();
   lock.lock();
-  if (current_index >= current_pattern.arm_angles().size()) {
-    current_index = 0;
-    if (++current_pattern_index >= patterns.size()) {
-      current_pattern_index = 0;
-    }
-    current_pattern = patterns[current_pattern_index];
+  if (patterns.size() == 0) {
+    lock.unlock();
+    return;
   }
-  sisyphus::ArmAngle angle = current_pattern.arm_angles(current_index);
-  if (current_index == 0) {
-    stepper_motor.moveToStart(angle.stepper_angle());
-    servo_motor.moveToStart(angle.servo_angle());
+  if (pattern_index >= patterns.size()) {
+    pattern_index = 0;
   }
-  current_index++;
+  PatternWrapper pattern = patterns[pattern_index];
+  if (!pattern.has_next()) {
+    pattern_index++;
+    lock.unlock();
+    return;
+  }
   lock.unlock();
-  bool keep_going =
-      servo_motor.step(angle.servo_angle())
-          && stepper_motor.step(angle.stepper_angle());
-  while (!keep_going) {
-    keep_going =
-        servo_motor.step(angle.servo_angle())
-            && stepper_motor.step(angle.stepper_angle());
-  }
-  uint32_t diff = millis() - last_step_time;
-  if (diff < 100) {
-    delay(100 - diff);
-  }
+  stepper_motors.step(pattern.next());
+  delay(5);
 }

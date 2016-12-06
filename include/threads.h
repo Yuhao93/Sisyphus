@@ -3,7 +3,7 @@
 
 #include "pattern_manager.h"
 #include "model.pb.h"
-#include <thread>
+#include <pthread.h>
 #include <vector>
 
 namespace Threads {
@@ -11,7 +11,7 @@ namespace Threads {
   void Start(PatternManager* pattern_manager);
 
   extern PatternManager* pattern_manager;
-  extern std::vector<std::thread> threads;
+  extern std::vector<pthread_t> threads;
 }
 
 #endif
