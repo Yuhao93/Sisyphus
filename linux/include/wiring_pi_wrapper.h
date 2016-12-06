@@ -3,4 +3,7 @@
 
 #include <wiringPi.h>
 
+#define WIRING_PI_INPUT INPUT
+#define WIRING_PI_OUTPUT OUTPUT
+
 #endif

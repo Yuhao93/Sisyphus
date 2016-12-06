@@ -15,8 +15,9 @@ int main() {
     start.set_r(.5f);
     end.set_a(2 * SisyphusUtil::pi * (i + 1) / 500.0f);
     end.set_r(.5f);
-    pattern.add_path_segment()->CopyFrom(
-        SisyphusUtil::SegmentFromPolarCoordinates(start, end));
+    sisyphus::Segment segment =
+        SisyphusUtil::SegmentFromPolarCoordinates(start, end);
+    pattern.add_path_segment()->CopyFrom(segment);
   }
   patternManager.queue_pattern(pattern);
 

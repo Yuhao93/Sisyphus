@@ -13,7 +13,7 @@ void polar_to_point(
     const sisyphus::PolarCoordinate& polar) {
   point->set_angular_value(
       (int) (ANGULAR_STEPS_PER_REVOLUTION *
-          SisyphusUtil::ClampBetween2Pi(polar.a())));
+          SisyphusUtil::ClampBetween2Pi(polar.a()) / (2 * SisyphusUtil::pi)));
   point->set_linear_value((int) (LINEAR_STEPS_PER_SWEEP * polar.r()));
 }
 }

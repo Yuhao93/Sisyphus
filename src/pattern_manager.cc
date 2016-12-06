@@ -51,5 +51,5 @@ void PatternManager::step() {
   }
   lock.unlock();
   stepper_motors.step(pattern.next());
-  delay(5);
+  delay(10);
 }

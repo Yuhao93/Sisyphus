@@ -71,12 +71,14 @@ void StepperMotors::step(const sisyphus::Step& step) {
     current_magnitude +=
         step.linear_movement() == sisyphus::Step::FORWARDS ? 1 : -1;
   }
-  prepare(STEPPER_MOTORS_GPIO_ANGLE_DIR, step.angular_movement());
-  prepare(STEPPER_MOTORS_GPIO_LINEAR_DIR, step.linear_movement());
+  sisyphus::Step_Movement angular_movement = step.angular_movement();
+  sisyphus::Step_Movement linear_movement = step.linear_movement();
+  prepare(STEPPER_MOTORS_GPIO_ANGLE_DIR, angular_movement);
+  prepare(STEPPER_MOTORS_GPIO_LINEAR_DIR, linear_movement);
   delay(1);
-  begin(STEPPER_MOTORS_GPIO_ANGLE_STEP, step.angular_movement());
-  begin(STEPPER_MOTORS_GPIO_LINEAR_STEP, step.linear_movement());
+  begin(STEPPER_MOTORS_GPIO_ANGLE_STEP, angular_movement);
+  begin(STEPPER_MOTORS_GPIO_LINEAR_STEP, linear_movement);
   delay(1);
-  end(STEPPER_MOTORS_GPIO_ANGLE_STEP, step.angular_movement());
-  end(STEPPER_MOTORS_GPIO_LINEAR_STEP, step.linear_movement());
+  end(STEPPER_MOTORS_GPIO_ANGLE_STEP, angular_movement);
+  end(STEPPER_MOTORS_GPIO_LINEAR_STEP, linear_movement);
 }

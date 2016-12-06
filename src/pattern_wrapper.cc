@@ -156,7 +156,7 @@ sisyphus::Pattern PatternWrapper::pattern() {
 }
 
 bool PatternWrapper::has_next() {
-  return segment_index >= p.path_segment().size();
+  return segment_index < p.path_segment().size();
 }
 
 sisyphus::Step PatternWrapper::next() {
