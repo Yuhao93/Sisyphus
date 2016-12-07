@@ -17,8 +17,8 @@ public:
 
 private:
   int get_octant(const sisyphus::Segment& segment);
-  void transform_input(int* x, int* y, const sisyphus::Segment_Point& point);
-  void transform_output(int x, int y, int* linear_value, int* angular_value);
+  void transform_input(int& x, int& y, const sisyphus::Segment_Point& point);
+  void transform_output(int x, int y, int& angular_value, int& linear_value);
   void init_segment(const sisyphus::Segment& segment);
 
   sisyphus::Pattern p;

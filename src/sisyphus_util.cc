@@ -37,7 +37,7 @@ int SisyphusUtil::DiffBetweenAngles(int angle1, int angle2) {
   int diff = angle1 - angle2;
   int diff_magnitude = abs(diff);
   return diff_magnitude > (ANGULAR_STEPS_PER_REVOLUTION / 2)
-      ? (ANGULAR_STEPS_PER_REVOLUTION - diff_magnitude) * (diff < 0 ? -1 : 1)
+      ? (ANGULAR_STEPS_PER_REVOLUTION - diff_magnitude) * (diff < 0 ? 1 : -1)
       : diff;
 }
 

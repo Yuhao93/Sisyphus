@@ -47,13 +47,13 @@ void StepperMotors::move_to_start(float magnitude) {
   linear_forward.set_linear_movement(sisyphus::Step::FORWARDS);
   while (digitalRead(STEPPER_MOTORS_GPIO_FEEDBACK) != HIGH) {
     step(linear_back);
-    delay(5);
+    delay(2);
   }
   current_magnitude = 0;
   int num_steps = (int) (magnitude * STEPPER_MOTORS_LINEAR_STEPS_RANGE);
   for (int i = 0; i < num_steps; i++) {
     step(linear_forward);
-    delay(5);
+    delay(2);
   }
 }
 

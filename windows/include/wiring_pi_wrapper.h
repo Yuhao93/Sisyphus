@@ -11,7 +11,7 @@
 #define PWM_MODE_MS 0
 #define PWM_MODE_BAL 1
 
-#define WIRING_PI_DEBUG true
+#define WIRING_PI_DEBUG false
 
 void wiringPiSetup();
 
