@@ -137,8 +137,10 @@ void PatternWrapper::init_segment(const sisyphus::Segment& segment) {
   transform_input(x, y, segment.start());
   transform_input(end_x, end_y, segment.end());
   target_x = end_x;
-  dx = xy_swapped(octant) ? end_x - x : SisyphusUtil::DiffBetweenAngles(end_x, x);
-  dy = xy_swapped(octant) ? SisyphusUtil::DiffBetweenAngles(end_y, y): end_y - y;
+  dx = xy_swapped(octant)
+      ? end_x - x : SisyphusUtil::DiffBetweenAngles(end_x, x);
+  dy = xy_swapped(octant)
+      ? SisyphusUtil::DiffBetweenAngles(end_y, y): end_y - y;
   D = 2 * (dy) - (dx);
   prev_x = x;
   prev_y = y;
