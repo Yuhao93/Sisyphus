@@ -42,7 +42,7 @@ void StepperMotors::move_to_start(float magnitude) {
   // First move to the origin
   sisyphus::Step linear_back;
   linear_back.set_angular_movement(sisyphus::Step::STOP);
-  linear_back.set_linear_movement(sisyphus::Step::BACKWORDS);
+  linear_back.set_linear_movement(sisyphus::Step::BACKWARDS);
   sisyphus::Step linear_forward;
   linear_forward.set_angular_movement(sisyphus::Step::STOP);
   linear_forward.set_linear_movement(sisyphus::Step::FORWARDS);
@@ -68,7 +68,7 @@ void StepperMotors::step(const sisyphus::Step& step) {
     case sisyphus::Step::FORWARDS:
       a = "FORWARDS";
       break;
-    case sisyphus::Step::BACKWORDS:
+    case sisyphus::Step::BACKWARDS:
       a = "BACKWARDS";
       break;
   }
@@ -79,7 +79,7 @@ void StepperMotors::step(const sisyphus::Step& step) {
     case sisyphus::Step::FORWARDS:
       l = "FORWARDS";
       break;
-    case sisyphus::Step::BACKWORDS:
+    case sisyphus::Step::BACKWARDS:
       l = "BACKWARDS";
       break;
   }

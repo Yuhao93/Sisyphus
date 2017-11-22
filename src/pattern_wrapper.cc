@@ -177,10 +177,10 @@ sisyphus::Step PatternWrapper::next() {
   sisyphus::Step::Movement* y_dir = is_flipped ? &a_dir : &l_dir;
 
   x++;
-  *x_dir = reverseX ? sisyphus::Step::BACKWORDS : sisyphus::Step::FORWARDS;
+  *x_dir = reverseX ? sisyphus::Step::BACKWARDS : sisyphus::Step::FORWARDS;
   if (D > 0) {
     y++;
-    *y_dir = reverseY ? sisyphus::Step::BACKWORDS : sisyphus::Step::FORWARDS;
+    *y_dir = reverseY ? sisyphus::Step::BACKWARDS : sisyphus::Step::FORWARDS;
     D -= 2 * dx;
   }
   D += 2 * dy;
@@ -206,11 +206,10 @@ sisyphus::Step PatternWrapper::next() {
   step.set_linear_movement(l_dir);
 
   if (a == target_a && l == target_l) {
-    if (++segment_index >= p.path_segment().size()) {
-      segment_index = 0;
+    if (++segment_index < p.path_segment().size()) {
+      current_segment = p.path_segment(segment_index);
+      initializeSegment(current_segment);
     }
-    current_segment = p.path_segment(segment_index);
-    initializeSegment(current_segment);
   }
 
   return step;

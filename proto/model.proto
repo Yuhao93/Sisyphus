@@ -18,7 +18,7 @@ message Segment {
 message Step {
   enum Movement {
     FORWARDS = 1;
-    BACKWORDS = 2;
+    BACKWARDS = 2;
     STOP = 3;
   }
   optional Movement angular_movement = 1;
