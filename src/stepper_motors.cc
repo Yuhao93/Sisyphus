@@ -50,7 +50,6 @@ void StepperMotors::move_to_start(float magnitude) {
     step(linear_back);
     delay(2);
   }
-  current_magnitude = 0;
   int num_steps = (int) (magnitude * STEPPER_MOTORS_LINEAR_STEPS_RANGE);
   for (int i = 0; i < num_steps; i++) {
     step(linear_forward);
@@ -85,19 +84,6 @@ void StepperMotors::step(const sisyphus::Step& step) {
   }
   //printf("a:%s, l:%s\n", a.c_str(), l.c_str());
 
-  if (step.angular_movement() != sisyphus::Step::STOP) {
-    current_angle +=
-        step.angular_movement() == sisyphus::Step::FORWARDS ? 1 : -1;
-    if (current_angle < 0) {
-      current_angle = STEPPER_MOTORS_ANGULAR_STEPS_RANGE - 1;
-    } else if (current_angle >= STEPPER_MOTORS_ANGULAR_STEPS_RANGE) {
-      current_angle = 0;
-    }
-  }
-  if (step.linear_movement() != sisyphus::Step::STOP) {
-    current_magnitude +=
-        step.linear_movement() == sisyphus::Step::FORWARDS ? 1 : -1;
-  }
   sisyphus::Step_Movement angular_movement = step.angular_movement();
   sisyphus::Step_Movement linear_movement = step.linear_movement();
   prepare(STEPPER_MOTORS_GPIO_ANGLE_DIR, angular_movement);

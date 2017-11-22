@@ -14,14 +14,10 @@
 
 class StepperMotors {
 public:
-  StepperMotors() : current_angle(0), current_magnitude(0) {}
+  StepperMotors() {}
   void setup();
   void move_to_start(float magnitude);
   void step(const sisyphus::Step& step);
-
-private:
-  int current_angle;
-  int current_magnitude;
 };
 
 #endif
