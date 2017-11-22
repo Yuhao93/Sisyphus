@@ -3,6 +3,7 @@
 #include "model.pb.h"
 #include "wiring_pi_wrapper.h"
 #include <cstdio>
+#include <string>
 
 namespace {
 
@@ -58,6 +59,32 @@ void StepperMotors::move_to_start(float magnitude) {
 }
 
 void StepperMotors::step(const sisyphus::Step& step) {
+  std::string a;
+  std::string l;
+  switch (step.angular_movement()) {
+    case sisyphus::Step::STOP:
+      a = "STOP";
+      break;
+    case sisyphus::Step::FORWARDS:
+      a = "FORWARDS";
+      break;
+    case sisyphus::Step::BACKWORDS:
+      a = "BACKWARDS";
+      break;
+  }
+  switch (step.linear_movement()) {
+    case sisyphus::Step::STOP:
+      l = "STOP";
+      break;
+    case sisyphus::Step::FORWARDS:
+      l = "FORWARDS";
+      break;
+    case sisyphus::Step::BACKWORDS:
+      l = "BACKWARDS";
+      break;
+  }
+  //printf("a:%s, l:%s\n", a.c_str(), l.c_str());
+
   if (step.angular_movement() != sisyphus::Step::STOP) {
     current_angle +=
         step.angular_movement() == sisyphus::Step::FORWARDS ? 1 : -1;

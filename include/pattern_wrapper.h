@@ -16,22 +16,21 @@ public:
   sisyphus::Step next();
 
 private:
-  int get_octant(const sisyphus::Segment& segment);
-  void transform_input(int& x, int& y, const sisyphus::Segment_Point& point);
-  void transform_output(int x, int y, int& angular_value, int& linear_value);
-  void init_segment(const sisyphus::Segment& segment);
+  void initializeSegment(sisyphus::Segment& segment);
 
   sisyphus::Pattern p;
-  int prev_x;
-  int prev_y;
+  sisyphus::Segment current_segment;
+  int segment_index;
+
+  int octant;
+  int x;
+  int y;
   int dx;
   int dy;
   int D;
-  int x;
-  int y;
-  int target_x;
-  int octant;
-  int segment_index;
+
+  bool reverseX;
+  bool reverseY;
 };
 
 #endif

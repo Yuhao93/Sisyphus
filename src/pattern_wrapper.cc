@@ -4,12 +4,25 @@
 #include "sisyphus_util.h"
 #include "table_constants.h"
 #include <cstdlib>
+#include <cmath>
 
 namespace {
 sisyphus::Step default_step;
 
-int xy_swapped(int octant) {
-  switch (octant) {
+int octantFromSegment(sisyphus::Segment& segment) {
+  int x = SisyphusUtil::DiffBetweenAngles(segment.end().angular_value(), segment.start().angular_value());
+  int y = segment.end().linear_value() - segment.start().linear_value();
+  double angle = 4 * atan2(y, x) / SisyphusUtil::pi;
+
+  if (angle < 0) {
+    angle += 8;
+  }
+
+  return (int) angle;
+}
+
+bool isFlipped(int octant) {
+  switch(octant) {
     case 1:
     case 2:
     case 5:
@@ -20,138 +33,131 @@ int xy_swapped(int octant) {
   }
 }
 
-}
-
-int PatternWrapper::get_octant(const sisyphus::Segment& segment) {
-  int angular_change =
-      SisyphusUtil::DiffBetweenAngles(
-          segment.end().angular_value(),
-          segment.start().angular_value());
-  int linear_change =
-      segment.end().linear_value() - segment.start().linear_value();
-  if (linear_change >= 0 && angular_change >= 0) {
-    if (linear_change <= angular_change) {
-      return 0;
-    } else {
-      return 1;
-    }
-  } else if (linear_change >= 0 && angular_change < 0) {
-    if (linear_change > abs(angular_change)) {
-      return 2;
-    } else {
-      return 3;
-    }
-  } else if (linear_change < 0 && angular_change < 0) {
-    if (abs(linear_change) <= abs(angular_change)) {
-      return 4;
-    } else {
-      return 5;
-    }
-  } else if (abs(linear_change) <= angular_change) {
-    return 6;
-  } else {
-    return 7;
-  }
-}
-
-void PatternWrapper::transform_input(
-      int& x, int& y, const sisyphus::Segment_Point& point) {
-  switch (octant) {
+void setXYWithOctant(int octant, sisyphus::Segment& segment, int& x, int& y, int& dx, int& dy, bool& reverseX, bool& reverseY) {
+  int a = segment.start().angular_value();
+  int l = segment.start().linear_value();
+  int da = SisyphusUtil::DiffBetweenAngles(segment.end().angular_value(), a);
+  int dl = segment.end().linear_value() - l;
+  switch(octant) {
     case 0:
-      x = point.angular_value();
-      y = point.linear_value();
-      return;
+      x = a;
+      dx = da;
+      y = l;
+      dy = dl;
+      reverseX = false;
+      reverseY = false;
+      break;
     case 1:
-      x = point.linear_value();
-      y = point.angular_value();
-      return;
+      x = l;
+      dx = dl;
+      y = a;
+      dy = da;
+      reverseX = false;
+      reverseY = false;
+      break;
     case 2:
-      x = point.linear_value();
-      y = -point.angular_value();
-      return;
+      x = l;
+      dx = dl;
+      y = -a;
+      dy = -da;
+      reverseX = false;
+      reverseY = true;
+      break;
     case 3:
-      x = -point.angular_value();
-      y = point.linear_value();
-      return;
+      x = -a;
+      dx = -da;
+      y = l;
+      dy = dl;
+      reverseX = true;
+      reverseY = false;
+      break;
     case 4:
-      x = -point.angular_value();
-      y = -point.linear_value();
-      return;
+      x = -a;
+      dx = -da;
+      y = -l;
+      dy = -dl;
+      reverseX = true;
+      reverseY = true;
+      break;
     case 5:
-      x = -point.linear_value();
-      y = -point.angular_value();
-      return;
+      x = -l;
+      dx = -dl;
+      y = -a;
+      dy = -da;
+      reverseX = true;
+      reverseY = true;
+      break;
     case 6:
-      x = -point.linear_value();
-      y = point.angular_value();
-      return;
+      x = -l;
+      dx = -dl;
+      y = a;
+      dy = da;
+      reverseX = true;
+      reverseY = false;
+      break;
     case 7:
-      x = point.angular_value();
-      y = -point.linear_value();
-      return;
+      x = a;
+      dx = da;
+      y = -l;
+      dy = -dl;
+      reverseX = false;
+      reverseY = true;
+      break;
   }
 }
 
-void PatternWrapper::transform_output(
-    int x, int y, int& angular_value, int& linear_value) {
-  switch (octant) {
+void setALWithOctant(int octant, int& a, int& l, int x, int y) {
+  switch(octant) {
     case 0:
-      angular_value = x;
-      linear_value = y;
-      return;
+      a = x;
+      l = y;
+      break;
     case 1:
-      angular_value = y;
-      linear_value = x;
-      return;
+      a = y;
+      l = x;
+      break;
     case 2:
-      angular_value = -y;
-      linear_value = x;
-      return;
+      a = -y;
+      l = x;
+      break;
     case 3:
-      angular_value = -x;
-      linear_value = y;
-      return;
+      a = -x;
+      l = y;
+      break;
     case 4:
-      angular_value = -x;
-      linear_value = -y;
-      return;
+      a = -x;
+      l = -y;
+      break;
     case 5:
-      angular_value = -y;
-      linear_value = -x;
-      return;
+      a = -y;
+      l = -x;
+      break;
     case 6:
-      angular_value = y;
-      linear_value = -x;
-      return;
+      a = y;
+      l = -x;
+      break;
     case 7:
-      angular_value = x;
-      linear_value = -y;
-      return;
+      a = x;
+      l = -y;
+      break;
   }
 }
 
-void PatternWrapper::init_segment(const sisyphus::Segment& segment) {
-  octant = get_octant(segment);
-  int end_x;
-  int end_y;
-  transform_input(x, y, segment.start());
-  transform_input(end_x, end_y, segment.end());
-  target_x = end_x;
-  dx = xy_swapped(octant)
-      ? end_x - x : SisyphusUtil::DiffBetweenAngles(end_x, x);
-  dy = xy_swapped(octant)
-      ? SisyphusUtil::DiffBetweenAngles(end_y, y): end_y - y;
-  D = 2 * (dy) - (dx);
-  prev_x = x;
-  prev_y = y;
 }
 
 PatternWrapper::PatternWrapper(const sisyphus::Pattern& pattern) : p(pattern) {
-  segment_index = 0;
-  if (p.path_segment().empty()) {
+  if (p.path_segment().size() < 1) {
     return;
   }
-  init_segment(p.path_segment(segment_index));
+  segment_index = 0;
+  current_segment = p.path_segment(0);
+  initializeSegment(current_segment);
+}
+
+void PatternWrapper::initializeSegment(sisyphus::Segment& segment) {
+  octant = octantFromSegment(current_segment);
+  setXYWithOctant(octant, segment, x, y, dx, dy, reverseX, reverseY);
+  D = 2 * dy - dx;
 }
 
 sisyphus::Pattern PatternWrapper::pattern() {
@@ -163,52 +169,49 @@ bool PatternWrapper::has_next() {
 }
 
 sisyphus::Step PatternWrapper::next() {
-  if (!has_next()) {
-    return default_step;
+  bool is_flipped = isFlipped(octant);
+  sisyphus::Step::Movement a_dir = sisyphus::Step::STOP;
+  sisyphus::Step::Movement l_dir = sisyphus::Step::STOP;
+
+  sisyphus::Step::Movement* x_dir = is_flipped ? &l_dir : &a_dir;
+  sisyphus::Step::Movement* y_dir = is_flipped ? &a_dir : &l_dir;
+
+  x++;
+  *x_dir = reverseX ? sisyphus::Step::BACKWORDS : sisyphus::Step::FORWARDS;
+  if (D > 0) {
+    y++;
+    *y_dir = reverseY ? sisyphus::Step::BACKWORDS : sisyphus::Step::FORWARDS;
+    D -= 2 * dx;
   }
+  D += 2 * dy;
+
+  int* angular_value = is_flipped ? &y : &x;
+  int a_value = *angular_value;
+  if (a_value >= ANGULAR_STEPS_PER_REVOLUTION) {
+    *angular_value -= (ANGULAR_STEPS_PER_REVOLUTION * a_value / ANGULAR_STEPS_PER_REVOLUTION);
+  }
+  int a;
+  int l;
+  setALWithOctant(octant, a, l, x, y);
+  if (a < 0) {
+    a += (ANGULAR_STEPS_PER_REVOLUTION * ((-a / ANGULAR_STEPS_PER_REVOLUTION) + 1));
+  }
+
+  int target_a = current_segment.end().angular_value();
+  int target_l = current_segment.end().linear_value();
+  int angle_diff = SisyphusUtil::DiffBetweenAngles(target_a, a);
+
   sisyphus::Step step;
-  int angular_value;
-  int prev_angular_value;
-  int linear_value;
-  int prev_linear_value;
-  transform_output(x, y, angular_value, linear_value);
-  transform_output(prev_x, prev_y, prev_angular_value, prev_linear_value);
-  int angle_diff =
-      SisyphusUtil::DiffBetweenAngles(angular_value, prev_angular_value);
-  if (angle_diff > 0) {
-    step.set_angular_movement(sisyphus::Step::FORWARDS);
-  } else if (angle_diff < 0) {
-    step.set_angular_movement(sisyphus::Step::BACKWORDS);
-  } else {
-    step.set_angular_movement(sisyphus::Step::STOP);
-  }
-  if (linear_value > prev_linear_value) {
-    step.set_linear_movement(sisyphus::Step::FORWARDS);
-  } else if (linear_value < prev_linear_value) {
-    step.set_linear_movement(sisyphus::Step::BACKWORDS);
-  } else {
-    step.set_linear_movement(sisyphus::Step::STOP);
-  }
-  prev_x = x;
-  prev_y = y;
-  if (x == target_x) {
-    segment_index++;
-    if (has_next()) {
-      init_segment(p.path_segment(segment_index));
+  step.set_angular_movement(a_dir);
+  step.set_linear_movement(l_dir);
+
+  if (a == target_a && l == target_l) {
+    if (++segment_index >= p.path_segment().size()) {
+      segment_index = 0;
     }
-  } else {
-    x++;
-    if (!xy_swapped(octant) && x == ANGULAR_STEPS_PER_REVOLUTION) {
-      x = 0;
-    }
-    if (D > 0) {
-      y++;
-      if (xy_swapped(octant) && y == ANGULAR_STEPS_PER_REVOLUTION) {
-        y = 0;
-      }
-      D -= dx;
-    }
-    D += dy;
+    current_segment = p.path_segment(segment_index);
+    initializeSegment(current_segment);
   }
+
   return step;
 }

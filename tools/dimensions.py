@@ -3,7 +3,10 @@ import sys
 
 sides = int(sys.argv[1])
 outer_radius = float(sys.argv[2])
-thickness = [1, 2]
+if len(sys.argv) < 4:
+  thickness = [1, 2]
+else:
+  thickness = [float(sys.argv[3])]
 
 inner_angle = math.radians((sides - 2) * 180 / sides)
 half_inner_angle = inner_angle / 2

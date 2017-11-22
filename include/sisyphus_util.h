@@ -2,6 +2,7 @@
 #define SISYPHUS_UTIL_H
 
 #include "model.pb.h"
+#include <vector>
 
 namespace SisyphusUtil {
 extern float pi;
@@ -10,12 +11,10 @@ float ClampBetween2Pi(float val);
 int DiffBetweenAngles(int angle1, int angle2);
 sisyphus::PolarCoordinate PolarFromCartesian(
     const sisyphus::CartesianCoordinate& coordinate);
-sisyphus::Segment SegmentFromPolarCoordinates(
-    const sisyphus::PolarCoordinate& start,
-    const sisyphus::PolarCoordinate& end);
-sisyphus::Segment SegmentFromCartesianCoordinates(
-    const sisyphus::CartesianCoordinate& start,
-    const sisyphus::CartesianCoordinate& end);
+sisyphus::Pattern PatternFromPolarCoordinates(
+    const std::vector<sisyphus::PolarCoordinate>& coords);
+sisyphus::Pattern PatternFromCartesianCoordinates(
+    const std::vector<sisyphus::CartesianCoordinate>& coords);
 }
 
 #endif

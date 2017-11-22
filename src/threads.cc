@@ -36,9 +36,9 @@ void Threads::QueuePattern(sisyphus::Pattern pattern) {
 void Threads::Start(PatternManager* p) {
   Threads::pattern_manager = p;
   pthread_t pattern_thread;
-  pthread_t tcp_thread;
+  //pthread_t tcp_thread;
   Threads::threads.push_back(pattern_thread);
-  Threads::threads.push_back(tcp_thread);
+  //Threads::threads.push_back(tcp_thread);
   pthread_create(&Threads::threads[0], NULL, &ThreadsImpl::do_pattern, NULL);
-  pthread_create(&Threads::threads[1], NULL, &ThreadsImpl::do_tcp, NULL);
+  //pthread_create(&Threads::threads[1], NULL, &ThreadsImpl::do_tcp, NULL);
 }

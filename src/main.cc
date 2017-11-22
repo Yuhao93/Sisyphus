@@ -7,18 +7,32 @@
 
 int main() {
   PatternManager patternManager;
-  sisyphus::Pattern pattern;
-  for (int i = 0; i < 400; i++) {
-    sisyphus::PolarCoordinate start;
-    sisyphus::PolarCoordinate end;
-    start.set_a(2 * SisyphusUtil::pi * i / 200.0f);
-    start.set_r(.5f);
-    end.set_a(2 * SisyphusUtil::pi * (i + 1) / 200.0f);
-    end.set_r(.5f);
-    sisyphus::Segment segment =
-        SisyphusUtil::SegmentFromPolarCoordinates(start, end);
-    pattern.add_path_segment()->CopyFrom(segment);
+  std::vector<sisyphus::CartesianCoordinate> coords;
+  for (int i = 1; i < 25; i++) {
+    sisyphus::CartesianCoordinate coord;
+    coord.set_x(0);
+    coord.set_y(-.5f * i / 25.0f);
+    coords.push_back(coord);
   }
+  for (int i = 0; i < 25; i++) {
+    sisyphus::CartesianCoordinate coord;
+    coord.set_x(.5f * i / 25.0f);
+    coord.set_y(-.5f);
+    coords.push_back(coord);
+  }
+  for (int i = 0; i < 25; i++) {
+    sisyphus::CartesianCoordinate coord;
+    coord.set_x(.5f);
+    coord.set_y(-.5f + .5f * i / 25.0f);
+    coords.push_back(coord);
+  }
+  for (int i = 0; i < 25; i++) {
+    sisyphus::CartesianCoordinate coord;
+    coord.set_x(.5f - .5f * i / 25.0f);
+    coord.set_y(0);
+    coords.push_back(coord);
+  }
+  sisyphus::Pattern pattern = SisyphusUtil::PatternFromCartesianCoordinates(coords);
   patternManager.queue_pattern(pattern);
   Threads::Start(&patternManager);
 

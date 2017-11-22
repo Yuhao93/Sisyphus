@@ -16,6 +16,21 @@ void polar_to_point(
           SisyphusUtil::ClampBetween2Pi(polar.a()) / (2 * SisyphusUtil::pi)));
   point->set_linear_value((int) (LINEAR_STEPS_PER_SWEEP * polar.r()));
 }
+
+sisyphus::Segment segment_from_points(
+    const sisyphus::PolarCoordinate& start,
+    const sisyphus::PolarCoordinate& end) {
+  sisyphus::Segment segment;
+  polar_to_point(segment.mutable_start(), start);
+  polar_to_point(segment.mutable_end(), end);
+  return segment;
+}
+
+bool segment_is_point(const sisyphus::Segment& segment) {
+  return segment.start().angular_value() == segment.end().angular_value()
+      && segment.start().linear_value() == segment.end().linear_value();
+}
+
 }
 
 float SisyphusUtil::pi = 3.14159f;
@@ -53,21 +68,37 @@ sisyphus::PolarCoordinate SisyphusUtil::PolarFromCartesian(
   return new_coordinate;
 }
 
-sisyphus::Segment SisyphusUtil::SegmentFromPolarCoordinates(
-    const sisyphus::PolarCoordinate& start,
-    const sisyphus::PolarCoordinate& end) {
-  sisyphus::Segment segment;
-  sisyphus::Segment_Point* start_point = segment.mutable_start();
-  sisyphus::Segment_Point* end_point = segment.mutable_end();
-  polar_to_point(start_point, start);
-  polar_to_point(end_point, end);
-  return segment;
+sisyphus::Pattern SisyphusUtil::PatternFromPolarCoordinates(
+    const std::vector<sisyphus::PolarCoordinate>& coordinates) {
+  sisyphus::Pattern p;
+  if (coordinates.empty()) {
+    return p;
+  }
+  if (coordinates.size() == 1) {
+    *p.add_path_segment() =
+        segment_from_points(coordinates[0], coordinates[0]);
+    return p;
+  }
+  sisyphus::PolarCoordinate prev = coordinates[0];
+  for (int i = 1; i < coordinates.size(); i++) {
+    sisyphus::PolarCoordinate current = coordinates[i];
+    sisyphus::Segment segment = segment_from_points(prev, current);
+    if (!segment_is_point(segment)) {
+      *p.add_path_segment() = segment;
+    }
+    prev = current;
+  }
+  if (p.path_segment().empty()) {
+    *p.add_path_segment() = segment_from_points(prev, prev);
+  }
+  return p;
 }
 
-sisyphus::Segment SisyphusUtil::SegmentFromCartesianCoordinates(
-    const sisyphus::CartesianCoordinate& start,
-    const sisyphus::CartesianCoordinate& end) {
-  return SisyphusUtil::SegmentFromPolarCoordinates(
-      SisyphusUtil::PolarFromCartesian(start),
-      SisyphusUtil::PolarFromCartesian(end));
+sisyphus::Pattern SisyphusUtil::PatternFromCartesianCoordinates(
+    const std::vector<sisyphus::CartesianCoordinate>& coordinates) {
+  std::vector<sisyphus::PolarCoordinate> polar;
+  for (const sisyphus::CartesianCoordinate& coordinate : coordinates) {
+    polar.push_back(SisyphusUtil::PolarFromCartesian(coordinate));
+  }
+  return SisyphusUtil::PatternFromPolarCoordinates(polar);
 }
