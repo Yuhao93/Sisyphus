@@ -15,11 +15,11 @@ PatternManager::PatternManager() : pattern_index(0) {
 void PatternManager::queue_pattern(sisyphus::Pattern pattern) {
   lock.lock();
   PatternWrapper p(pattern);
+  patterns.push_back(p);
+  current_pattern = p;
   if (patterns.empty()) {
-    patterns.push_back(p);
     pattern_index = 0;
   } else {
-    patterns.push_back(p);
     pattern_index++;
   }
   lock.unlock();
@@ -43,14 +43,14 @@ void PatternManager::step() {
   }
   if (pattern_index >= patterns.size()) {
     pattern_index = 0;
+    current_pattern = patterns[pattern_index];
   }
-  PatternWrapper& pattern = patterns[pattern_index];
-  if (!pattern.has_next()) {
+  if (!current_pattern.has_next()) {
     pattern_index++;
+    current_pattern = patterns[pattern_index];
     lock.unlock();
     return;
   }
   lock.unlock();
-  stepper_motors.step(pattern.next());
-  //delay(2);
+  stepper_motors.step(current_pattern.next());
 }
