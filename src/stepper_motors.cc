@@ -11,7 +11,7 @@ void prepare(int dir_pin, const sisyphus::Step_Movement& movement) {
   if (movement == sisyphus::Step::STOP) {
     return;
   }
-  digitalWrite(dir_pin, movement == sisyphus::Step::FORWARDS ? HIGH : LOW);
+  digitalWrite(dir_pin, movement == sisyphus::Step::FORWARDS ? LOW : HIGH);
 }
 
 void begin(int step_pin, const sisyphus::Step_Movement& movement) {
@@ -58,32 +58,6 @@ void StepperMotors::move_to_start(float magnitude) {
 }
 
 void StepperMotors::step(const sisyphus::Step& step) {
-  std::string a;
-  std::string l;
-  switch (step.angular_movement()) {
-    case sisyphus::Step::STOP:
-      a = "STOP";
-      break;
-    case sisyphus::Step::FORWARDS:
-      a = "FORWARDS";
-      break;
-    case sisyphus::Step::BACKWARDS:
-      a = "BACKWARDS";
-      break;
-  }
-  switch (step.linear_movement()) {
-    case sisyphus::Step::STOP:
-      l = "STOP";
-      break;
-    case sisyphus::Step::FORWARDS:
-      l = "FORWARDS";
-      break;
-    case sisyphus::Step::BACKWARDS:
-      l = "BACKWARDS";
-      break;
-  }
-  //printf("a:%s, l:%s\n", a.c_str(), l.c_str());
-
   sisyphus::Step_Movement angular_movement = step.angular_movement();
   sisyphus::Step_Movement linear_movement = step.linear_movement();
   prepare(STEPPER_MOTORS_GPIO_ANGLE_DIR, angular_movement);

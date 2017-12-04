@@ -11,24 +11,24 @@ int main() {
   for (int i = 1; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
     coord.set_x(0);
-    coord.set_y(-.5f * i / 25.0f);
+    coord.set_y(-.49f * i / 25.0f);
     coords.push_back(coord);
   }
   for (int i = 0; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
-    coord.set_x(.5f * i / 25.0f);
-    coord.set_y(-.5f);
+    coord.set_x(.49f * i / 25.0f);
+    coord.set_y(-.49f);
     coords.push_back(coord);
   }
   for (int i = 0; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
-    coord.set_x(.5f);
-    coord.set_y(-.5f + .5f * i / 25.0f);
+    coord.set_x(.49f);
+    coord.set_y(-.49f + .49f * i / 25.0f);
     coords.push_back(coord);
   }
   for (int i = 0; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
-    coord.set_x(.5f - .5f * i / 25.0f);
+    coord.set_x(.49f - .49f * i / 25.0f);
     coord.set_y(0);
     coords.push_back(coord);
   }

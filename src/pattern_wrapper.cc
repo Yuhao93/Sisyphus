@@ -188,7 +188,7 @@ sisyphus::Step PatternWrapper::next() {
   int* angular_value = is_flipped ? &y : &x;
   int a_value = *angular_value;
   if (a_value >= ANGULAR_STEPS_PER_REVOLUTION) {
-    *angular_value -= (ANGULAR_STEPS_PER_REVOLUTION * a_value / ANGULAR_STEPS_PER_REVOLUTION);
+    *angular_value -= (ANGULAR_STEPS_PER_REVOLUTION * (a_value / ANGULAR_STEPS_PER_REVOLUTION));
   }
   int a;
   int l;

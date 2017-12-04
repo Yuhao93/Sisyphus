@@ -27,8 +27,6 @@ private:
   std::vector<PatternWrapper> patterns;
   std::mutex lock;
 
-  PatternWrapper& current_pattern;
-
   int pattern_index;
 };
 
