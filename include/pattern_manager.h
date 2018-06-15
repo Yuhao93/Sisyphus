@@ -3,7 +3,7 @@
 
 #include "stepper_motors.h"
 #include "model.pb.h"
-#include "pattern_wrapper.h"
+#include "pattern_iterator.h"
 #include <mutex>
 #include <vector>
 
@@ -13,18 +13,18 @@ public:
   /**
    * Adds a pattern into the end of the circular buffer of patterns.
    */
-  void queue_pattern(sisyphus::Pattern pattern);
+  void queue_pattern(const sisyphus::Pattern& pattern);
 
   /**
    * List patterns
    */
-  std::vector<sisyphus::Pattern> list_patterns();
+  const std::vector<sisyphus::Pattern> list_patterns();
 
   void step();
 
 private:
   StepperMotors stepper_motors;
-  std::vector<PatternWrapper> patterns;
+  std::vector<PatternIterator> patterns;
   std::mutex lock;
 
   int pattern_index;

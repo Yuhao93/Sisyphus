@@ -1,4 +1,4 @@
-#include "pattern_wrapper.h"
+#include "pattern_iterator.h"
 
 #include "model.pb.h"
 #include "sisyphus_util.h"
@@ -9,7 +9,7 @@
 namespace {
 sisyphus::Step default_step;
 
-int octantFromSegment(sisyphus::Segment& segment) {
+int octantFromSegment(const sisyphus::Segment& segment) {
   int x = SisyphusUtil::DiffBetweenAngles(segment.end().angular_value(), segment.start().angular_value());
   int y = segment.end().linear_value() - segment.start().linear_value();
   double angle = 4 * atan2(y, x) / SisyphusUtil::pi;
@@ -33,7 +33,7 @@ bool isFlipped(int octant) {
   }
 }
 
-void setXYWithOctant(int octant, sisyphus::Segment& segment, int& x, int& y, int& dx, int& dy, bool& reverseX, bool& reverseY) {
+void setXYWithOctant(int octant, const sisyphus::Segment& segment, int& x, int& y, int& dx, int& dy, bool& reverseX, bool& reverseY) {
   int a = segment.start().angular_value();
   int l = segment.start().linear_value();
   int da = SisyphusUtil::DiffBetweenAngles(segment.end().angular_value(), a);
@@ -145,7 +145,7 @@ void setALWithOctant(int octant, int& a, int& l, int x, int y) {
 
 }
 
-PatternWrapper::PatternWrapper(const sisyphus::Pattern& pattern) : p(pattern) {
+PatternIterator::PatternIterator(const sisyphus::Pattern& pattern) : p(pattern) {
   if (p.path_segment().size() < 1) {
     return;
   }
@@ -154,21 +154,21 @@ PatternWrapper::PatternWrapper(const sisyphus::Pattern& pattern) : p(pattern) {
   initializeSegment(current_segment);
 }
 
-void PatternWrapper::initializeSegment(sisyphus::Segment& segment) {
+void PatternIterator::initializeSegment(const sisyphus::Segment& segment) {
   octant = octantFromSegment(current_segment);
   setXYWithOctant(octant, segment, x, y, dx, dy, reverseX, reverseY);
   D = 2 * dy - dx;
 }
 
-sisyphus::Pattern PatternWrapper::pattern() {
+const sisyphus::Pattern& PatternIterator::pattern() const {
   return p;
 }
 
-bool PatternWrapper::has_next() {
+bool PatternIterator::has_next() const {
   return segment_index < p.path_segment().size();
 }
 
-sisyphus::Step PatternWrapper::next() {
+const sisyphus::Step& PatternIterator::next() {
   bool is_flipped = isFlipped(octant);
   sisyphus::Step::Movement a_dir = sisyphus::Step::STOP;
   sisyphus::Step::Movement l_dir = sisyphus::Step::STOP;
@@ -212,5 +212,5 @@ sisyphus::Step PatternWrapper::next() {
     }
   }
 
-  return step;
+  return std::move(step);
 }

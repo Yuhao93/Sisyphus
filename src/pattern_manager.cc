@@ -3,7 +3,7 @@
 #include "sisyphus_util.h"
 #include "stepper_motors.h"
 #include "model.pb.h"
-#include "pattern_wrapper.h"
+#include "pattern_iterator.h"
 #include "wiring_pi_wrapper.h"
 #include <cstdint>
 
@@ -12,23 +12,23 @@ PatternManager::PatternManager() : pattern_index(0) {
   stepper_motors.setup();
 }
 
-void PatternManager::queue_pattern(sisyphus::Pattern pattern) {
+void PatternManager::queue_pattern(const sisyphus::Pattern& pattern) {
   lock.lock();
-  PatternWrapper p(pattern);
-  patterns.push_back(p);
+  PatternIterator p(pattern);
   if (patterns.empty()) {
     pattern_index = 0;
   } else {
     pattern_index++;
   }
+  patterns.push_back(p);
   lock.unlock();
 }
 
-std::vector<sisyphus::Pattern> PatternManager::list_patterns() {
+const std::vector<sisyphus::Pattern> PatternManager::list_patterns() {
   std::vector<sisyphus::Pattern> patterns_copy;
   lock.lock();
-  for (auto it = patterns.begin(); it != patterns.end(); it++) {
-    patterns_copy.push_back(it->pattern());
+  for (const auto& pattern : patterns) {
+    patterns_copy.push_back(pattern.pattern());
   }
   lock.unlock();
   return patterns_copy;

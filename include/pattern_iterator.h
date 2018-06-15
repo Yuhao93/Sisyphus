@@ -8,15 +8,15 @@
  * such that each call to next retrieves the next step to make in the pattern.
  * The underying implementation is the Bresenham line algorithm.
  */
-class PatternWrapper {
+class PatternIterator {
 public:
-  PatternWrapper(const sisyphus::Pattern& pattern);
-  sisyphus::Pattern pattern();
-  bool has_next();
-  sisyphus::Step next();
+  PatternIterator(const sisyphus::Pattern& pattern);
+  const sisyphus::Pattern& pattern() const;
+  bool has_next() const;
+  const sisyphus::Step& next();
 
 private:
-  void initializeSegment(sisyphus::Segment& segment);
+  void initializeSegment(const sisyphus::Segment& segment);
 
   sisyphus::Pattern p;
   sisyphus::Segment current_segment;
