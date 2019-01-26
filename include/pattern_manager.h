@@ -3,9 +3,10 @@
 
 #include "stepper_motors.h"
 #include "model.pb.h"
-#include "pattern_iterator.h"
+#include "abstract_pattern_iterator.h"
+#include "enqueued_pattern_iterator.h"
 #include <mutex>
-#include <vector>
+#include <deque>
 
 class PatternManager {
 public:
@@ -24,10 +25,9 @@ public:
 
 private:
   StepperMotors stepper_motors;
-  std::vector<PatternIterator> patterns;
+  std::deque<AbstractPatternIterator*> patterns;
+  std::deque<EnqueuedPatternIterator> seen_patterns;
   std::mutex lock;
-
-  int pattern_index;
 };
 
 #endif

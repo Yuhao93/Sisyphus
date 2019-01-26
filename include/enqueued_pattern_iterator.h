@@ -1,6 +1,7 @@
-#ifndef PATTERN_WRAPPER_H
-#define PATTERN_WRAPPER_H
+#ifndef ENQUEUED_PATTERN_ITERATOR_H
+#define ENQUEUED_PATTERN_ITERATOR_H
 
+#include "abstract_pattern_iterator.h"
 #include "model.pb.h"
 
 /**
@@ -8,12 +9,13 @@
  * such that each call to next retrieves the next step to make in the pattern.
  * The underying implementation is the Bresenham line algorithm.
  */
-class PatternIterator {
+class EnqueuedPatternIterator : public AbstractPatternIterator {
 public:
-  PatternIterator(const sisyphus::Pattern& pattern);
+  EnqueuedPatternIterator(const sisyphus::Pattern& pattern);
   const sisyphus::Pattern& pattern() const;
   bool has_next() const;
   const sisyphus::Step& next();
+  bool is_external_pattern() const;
 
 private:
   void initializeSegment(const sisyphus::Segment& segment);

@@ -1,53 +1,59 @@
 #include "pattern_manager.h"
 
+#include "gpio.h"
 #include "sisyphus_util.h"
 #include "stepper_motors.h"
 #include "model.pb.h"
-#include "pattern_iterator.h"
+#include "abstract_pattern_iterator.h"
+#include "enqueued_pattern_iterator.h"
+#include "initializing_pattern_iterator.h"
 #include "wiring_pi_wrapper.h"
 #include <cstdint>
+#include <mutex>
 
-PatternManager::PatternManager() : pattern_index(0) {
+#define MAX_HISTORY 10
+
+PatternManager::PatternManager() {
   wiringPiSetup();
-  stepper_motors.setup();
+  Gpio::setup();
 }
 
 void PatternManager::queue_pattern(const sisyphus::Pattern& pattern) {
-  lock.lock();
-  PatternIterator p(pattern);
-  if (patterns.empty()) {
-    pattern_index = 0;
-  } else {
-    pattern_index++;
-  }
-  patterns.push_back(p);
-  lock.unlock();
+  std::lock_guard<std::mutex> scoped_lock(lock);
+  patterns.push_back(new InitializingPatternIterator(pattern));
+  patterns.push_back(new EnqueuedPatternIterator(pattern));
 }
 
 const std::vector<sisyphus::Pattern> PatternManager::list_patterns() {
+  std::lock_guard<std::mutex> scoped_lock(lock);
   std::vector<sisyphus::Pattern> patterns_copy;
-  lock.lock();
-  for (const auto& pattern : patterns) {
-    patterns_copy.push_back(pattern.pattern());
+  for (const auto* pattern : patterns) {
+    if (pattern->is_external_pattern()) {
+      const EnqueuedPatternIterator* enqueued_pattern =
+          dynamic_cast<const EnqueuedPatternIterator*>(pattern);
+      patterns_copy.push_back(enqueued_pattern->pattern());
+    }
   }
-  lock.unlock();
   return patterns_copy;
 }
 
 void PatternManager::step() {
-  lock.lock();
+  std::lock_guard<std::mutex> scoped_lock(lock);
   if (patterns.size() == 0) {
-    lock.unlock();
     return;
   }
-  if (pattern_index >= patterns.size()) {
-    pattern_index = 0;
+  if (!patterns.front()->has_next()) {
+    AbstractPatternIterator* pattern = patterns.front();
+    patterns.pop_front();
+    if (pattern->is_external_pattern()) {
+      EnqueuedPatternIterator* enqueued_pattern =
+          dynamic_cast<EnqueuedPatternIterator*>(pattern);
+      seen_patterns.push_back(*enqueued_pattern);
+      if (seen_patterns.size() > MAX_HISTORY) {
+        seen_patterns.pop_front();
+      }
+    }
+    delete pattern;
   }
-  if (!patterns[pattern_index].has_next()) {
-    pattern_index++;
-    lock.unlock();
-    return;
-  }
-  lock.unlock();
-  stepper_motors.step(patterns[pattern_index].next());
+  stepper_motors.step(patterns.front()->next());
 }

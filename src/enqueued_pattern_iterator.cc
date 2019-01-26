@@ -1,4 +1,4 @@
-#include "pattern_iterator.h"
+#include "enqueued_pattern_iterator.h"
 
 #include "model.pb.h"
 #include "sisyphus_util.h"
@@ -145,7 +145,7 @@ void setALWithOctant(int octant, int& a, int& l, int x, int y) {
 
 }
 
-PatternIterator::PatternIterator(const sisyphus::Pattern& pattern) : p(pattern) {
+EnqueuedPatternIterator::EnqueuedPatternIterator(const sisyphus::Pattern& pattern) : p(pattern) {
   if (p.path_segment().size() < 1) {
     return;
   }
@@ -154,21 +154,25 @@ PatternIterator::PatternIterator(const sisyphus::Pattern& pattern) : p(pattern) 
   initializeSegment(current_segment);
 }
 
-void PatternIterator::initializeSegment(const sisyphus::Segment& segment) {
+void EnqueuedPatternIterator::initializeSegment(const sisyphus::Segment& segment) {
   octant = octantFromSegment(current_segment);
   setXYWithOctant(octant, segment, x, y, dx, dy, reverseX, reverseY);
   D = 2 * dy - dx;
 }
 
-const sisyphus::Pattern& PatternIterator::pattern() const {
+const sisyphus::Pattern& EnqueuedPatternIterator::pattern() const {
   return p;
 }
 
-bool PatternIterator::has_next() const {
+bool EnqueuedPatternIterator::has_next() const {
   return segment_index < p.path_segment().size();
 }
 
-const sisyphus::Step& PatternIterator::next() {
+bool EnqueuedPatternIterator::is_external_pattern() const {
+  return true;
+}
+
+const sisyphus::Step& EnqueuedPatternIterator::next() {
   bool is_flipped = isFlipped(octant);
   sisyphus::Step::Movement a_dir = sisyphus::Step::STOP;
   sisyphus::Step::Movement l_dir = sisyphus::Step::STOP;
@@ -199,7 +203,6 @@ const sisyphus::Step& PatternIterator::next() {
 
   int target_a = current_segment.end().angular_value();
   int target_l = current_segment.end().linear_value();
-  int angle_diff = SisyphusUtil::DiffBetweenAngles(target_a, a);
 
   sisyphus::Step step;
   step.set_angular_movement(a_dir);
