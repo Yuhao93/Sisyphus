@@ -2,7 +2,6 @@
 
 #include "model.pb.h"
 #include "pattern_manager.h"
-#include "tcp_server.h"
 #include "wiring_pi_wrapper.h"
 #include <pthread.h>
 #include <vector>
@@ -13,13 +12,6 @@ namespace ThreadsImpl {
       if (Threads::pattern_manager != nullptr) {
         Threads::pattern_manager->step();
       }
-    }
-  }
-
-  void* do_tcp(void*) {
-    TcpServerSetup();
-    while(true) {
-      TcpServerProcess();
     }
   }
 }

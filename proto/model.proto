@@ -46,6 +46,8 @@ message StoredPattern {
     CartesianPattern cartesian = 1;
     // Values are all between -1 and 1
     PolarPattern polar = 2;
+    // Function that generates either a cartesian pattern or polar pattern.
+    ParametricPattern parametric = 3;
   }
 }
 
@@ -55,4 +57,67 @@ message CartesianPattern {
 
 message PolarPattern {
   repeated PolarCoordinate coordinate = 1;
+}
+
+message ParametricPattern {
+  enum Type {
+    UNKNOWN_TYPE = 0;
+    CARTESIAN = 1;
+    POLAR = 2;
+  }
+  optional Type type = 1;
+
+  message Equation {
+    message BinaryEquation {
+      enum BinaryOperationType {
+        UNKNOWN_BINARY_OPERATION_TYPE = 0;
+        ADD = 1;
+        SUBTRACT = 2;
+        MULTIPLY = 3;
+        DIVIDE = 4;
+        POWER = 5;
+        ROOT = 6;
+        LOG = 7;
+        ATAN2 = 8;
+      }
+      optional Equation equation_left = 1;
+      optional Equation equation_right = 2;
+      optional BinaryOperationType operation = 3;
+    }
+
+    message UnaryEquation {
+      enum UnaryOperationType {
+        UNKNOWN_UNARY_OPERATION_TYPE = 0;
+        SIN = 1;
+        COS = 2;
+        TAN = 3;
+        ASIN = 4;
+        ACOS = 5;
+        ATAN = 6;
+        NEGATIVE = 7;
+      }
+      optional Equation equation = 1;
+      optional UnaryOperationType operation = 2;
+    }
+
+    enum Variable {
+      UNKNOWN_VARIABLE = 0;
+      T = 1;
+    }
+
+    oneof equation_type {
+      BinaryEquation binary_equation = 1;
+      UnaryEquation unary_equation = 2;
+      Variable variable = 3;
+      double constant = 4;
+    }
+  }
+
+  optional Equation equation_for_x_or_theta = 2;
+  optional Equation equation_for_y_or_r = 3;
+
+  optional double start_t = 4;
+  optional double end_t = 5;
+
+  optional double t_step = 6;
 }

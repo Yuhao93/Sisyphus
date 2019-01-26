@@ -1,25 +1,26 @@
 import math
 import sys
 
-sides = int(sys.argv[1])
-outer_radius = float(sys.argv[2])
-if len(sys.argv) < 4:
-  thickness = [1, 2]
-else:
-  thickness = [float(sys.argv[3])]
+def calc(inner_depth, outer_depth, sides):
+  r1 = 12.5
+  r2 = 13.5
+  r3 = r1 - inner_depth
+  r4 = r2 + outer_depth
+  theta = 90 - (90 * (sides - 2) / sides)
+  l1 = r3 * math.sin(math.pi * theta / 180)
+  l2 = r4 * math.tan(math.pi * theta / 180)
+  sides_per_cross_board = 1 if 2*l2 >= 3.5 else 2
+  sides_per_board = math.ceil(sides / (2 * sides_per_cross_board))
+  length = r4 - r3
+  board_length = length * sides_per_board
 
-inner_angle = math.radians((sides - 2) * 180 / sides)
-half_inner_angle = inner_angle / 2
-outer_length = 2 * outer_radius / math.tan(half_inner_angle)
+  print("inner_depth: " + str(inner_depth))
+  print("outer_depth: " + str(outer_depth))
+  print("sides: " + str(sides))
+  print("base: " + str(l2*2) + "/" + str(l1*2))
+  print("length: " + str(length))
+  print("board length: " + str(board_length))
+  print("theta: " + str(theta))
 
-for t in thickness:
-  inner_length = outer_length - (2 * t / math.tan(half_inner_angle))
-  inner_radius = inner_length / (2 * math.cos(half_inner_angle))
-  print ('*** For a ' + str(sides) + '-gon with thickness ' + str(t) + ':')
-  print ('  outer_radius = ' + str(outer_radius))
-  print ('  inner_radius = ' + str(inner_radius))
-  print ('  outer_length = ' + str(outer_length))
-  print ('  inner_length = ' + str(inner_length))
-  print ('  plank_thickness = ' + str(t))
-  print ('  ring_thickness = ' + str(outer_radius - inner_radius))
-  print ()
+
+calc(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
