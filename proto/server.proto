@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package sisyphus;
+
+import "model.proto";
+
+message SetLedIntensityRequest {
+  optional double intensity = 1;
+}
+
+message SetLedIntensityResponse {}
+
+message GetLedIntensityRequest {}
+
+message GetLedIntensityResponse {
+  optional double intensity = 1;
+}
+
+message InsertPatternRequest {
+  optional StoredPattern pattern = 1;
+  optional int32 position = 2;
+}
+
+message InsertPatternResponse {}
+
+message DeletePatternRequest {
+  optional int32 position = 1;
+}
+
+message DeletePatternResponse {
+  optional StoredPattern pattern = 1;
+}
+
+message GetPatternsRequest {}
+
+message GetPatternsResponse {
+  repeated StoredPattern upcoming_patterns = 1;
+  repeated StoredPattern past_patterns = 2;
+}
+
+service SisyphusService {
+  rpc SetLedIntensity (SetLedIntensityRequest) returns (SetLedIntensityResponse);
+  rpc GetLedIntensity (GetLedIntensityRequest) returns (GetLedIntensityResponse);
+  rpc InsertPattern (InsertPatternRequest) returns (InsertPatternResponse);
+  rpc DeletePattern (DeletePatternRequest) returns (DeletePatternResponse);
+  rpc GetPatterns (GetPatternsRequest) returns (GetPatternsResponse);
+}
