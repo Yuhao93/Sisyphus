@@ -14,12 +14,12 @@ public:
   /**
    * Adds a pattern into the end of the circular buffer of patterns.
    */
-  void queue_pattern(const sisyphus::Pattern& pattern);
+  void QueuePattern(const sisyphus::Pattern& pattern);
 
   /**
    * List patterns
    */
-  const std::vector<sisyphus::Pattern> list_patterns();
+  const std::vector<sisyphus::Pattern> ListPatterns();
 
   void step();
 

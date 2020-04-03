@@ -125,7 +125,7 @@ function evaluateBinaryEquation(t, binaryEquation) {
     case BinaryOperationType.POWER:
       return Math.pow(left, right);
     case BinaryOperationType.ROOT:
-      return Math.power(left, 1 / right);
+      return Math.pow(left, 1 / right);
     case BinaryOperationType.LOG:
       return Math.log(right) / Math.log(left);
     case BinaryOperationType.ATAN2:
@@ -169,8 +169,8 @@ const functionTypeMap = {
   'asin': { type: UnaryOperationType.ASIN, args: 1 },
   'acos': { type: UnaryOperationType.ACOS, args: 1 },
   'atan': { type: UnaryOperationType.ATAN, args: 1 },
-  'log_2': { type: UnaryOperationType.LOG, args: 1, default_left: 2 },
-  'sqrt': { type: UnaryOperationType.ROOT, args: 1, default_left: 2 },
+  'log_2': { type: BinaryOperationType.LOG, args: 1, default_left: 2 },
+  'sqrt': { type: BinaryOperationType.ROOT, args: 1, default_left: 2 },
   'atan2': { type: BinaryOperationType.ATAN2, args: 2 },
 };
 
@@ -215,7 +215,7 @@ function parseOperatorNode(node) {
 }
 
 function parseFunctionNode(node) {
-  const fn = functionTypeMap[node.name()];
+  const fn = functionTypeMap[node.name];
   if (!fn) {
     throw `Can not find supported function for ${node.toString()}`;
   }
@@ -226,7 +226,7 @@ function parseFunctionNode(node) {
     return binaryEquation(fn.type, parseNode(node.args[0]), parseNode(node.args[1]));
   } else if (fn.args == 1) {
     if (typeof fn.default_left !== 'undefined') {
-      return binaryEquation(fn.type, {value: fn.default_left}, parseNode(node.args[0]));
+      return binaryEquation(fn.type, parseConstantNode({value: fn.default_left}), parseNode(node.args[0]));
     }
     return unaryEquation(fn.type, parseNode(node.args[0]));
   } else {
@@ -261,7 +261,7 @@ function unaryEquation(type, inner) {
   const equation = new Equation();
   const unaryEquation = new UnaryEquation();
   unaryEquation.setOperation(type);
-  unaryEquation.setEquation(left);
+  unaryEquation.setEquation(inner);
   equation.setUnaryEquation(unaryEquation);
   return equation;
 }

@@ -15,6 +15,8 @@ sisyphus::Pattern PatternFromPolarCoordinates(
     const std::vector<sisyphus::PolarCoordinate>& coords);
 sisyphus::Pattern PatternFromCartesianCoordinates(
     const std::vector<sisyphus::CartesianCoordinate>& coords);
+sisyphus::Pattern StoredPatternToPattern(const sisyphus::StoredPattern& pattern);
+sisyphus::StoredPattern PatternToPolarStoredPattern(const sisyphus::Pattern& pattern);
 }
 
 #endif

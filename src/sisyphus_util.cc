@@ -31,6 +31,16 @@ bool segment_is_point(const sisyphus::Segment& segment) {
       && segment.start().linear_value() == segment.end().linear_value();
 }
 
+template<class Coord>
+std::vector<Coord> ToVector(
+    ::google::protobuf::RepeatedPtrField<Coord> coords) {
+  std::vector<Coord> vec;
+  for (const auto& coord : coords) {
+    vec.push_back(coord);
+  }
+  return vec;
+}
+
 }
 
 float SisyphusUtil::pi = 3.14159f;
@@ -101,4 +111,34 @@ sisyphus::Pattern SisyphusUtil::PatternFromCartesianCoordinates(
     polar.push_back(SisyphusUtil::PolarFromCartesian(coordinate));
   }
   return SisyphusUtil::PatternFromPolarCoordinates(polar);
+}
+
+sisyphus::Pattern SisyphusUtil::StoredPatternToPattern(
+    const sisyphus::StoredPattern& pattern) {
+  if (pattern.has_cartesian()) {
+    return SisyphusUtil::PatternFromCartesianCoordinates(ToVector(pattern.cartesian().coordiate()));
+  } else if (pattern.has_polar()) {
+    return SisyphusUtil::PatternFromPolarCoordinates(ToVector(pattern.polar().coordiate()));
+  }
+  return sisyphus::Pattern();
+}
+
+sisyphus::StoredPattern SisyphusUtil::PatternToPolarStoredPattern(
+    const sisyphus::Pattern& pattern) {
+  sisyphus::StoredPattern stored_pattern;
+  if (pattern.path_segment_count() == 0) {
+      return stored_pattern;
+  }
+
+  sisyphus::PolarCoordinate* coord =
+      stored_pattern.mutable_polar()->add_coordinate();
+  coord->set_a(pattern.path_segment(0).start().angular_value());
+  coord->set_r(pattern.path_segment(0).start().linear_value());
+  for (const auto& segment : pattern.path_segment()) {
+    coord = stored_pattern.mutable_polar()->add_coordinate();
+    coord->set_a(segment.end().angular_value());
+    coord->set_r(segment.end().linear_value());
+  }
+
+  return stored_pattern;
 }

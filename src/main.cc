@@ -1,4 +1,4 @@
-#include "pattern_manager.h"
+#include "application.h"
 #include "sisyphus_util.h"
 #include "model.pb.h"
 #include "threads.h"
@@ -6,7 +6,11 @@
 #include <cstdio>
 
 int main() {
-  PatternManager patternManager;
+  Application app;
+  Threads threads;
+  Thread* pattern_thread = new PatternThread(&app);
+  Thread* tcp_thread = new TcpThread(&app);
+
   std::vector<sisyphus::CartesianCoordinate> coords;
   for (int i = 1; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
@@ -32,9 +36,12 @@ int main() {
     coord.set_y(0);
     coords.push_back(coord);
   }
+
   sisyphus::Pattern pattern = SisyphusUtil::PatternFromCartesianCoordinates(coords);
-  patternManager.queue_pattern(pattern);
-  Threads::Start(&patternManager);
+  app.pattern_manager.queue_pattern(pattern);
+
+  threads.Start(pattern_thread);
+  threads.Start(tcp_thread);
 
   while(true) {
   }

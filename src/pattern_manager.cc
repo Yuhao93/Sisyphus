@@ -18,13 +18,13 @@ PatternManager::PatternManager() {
   Gpio::setup();
 }
 
-void PatternManager::queue_pattern(const sisyphus::Pattern& pattern) {
+void PatternManager::QueuePattern(const sisyphus::Pattern& pattern) {
   std::lock_guard<std::mutex> scoped_lock(lock);
   patterns.push_back(new InitializingPatternIterator(pattern));
   patterns.push_back(new EnqueuedPatternIterator(pattern));
 }
 
-const std::vector<sisyphus::Pattern> PatternManager::list_patterns() {
+const std::vector<sisyphus::Pattern> PatternManager::ListPatterns() {
   std::lock_guard<std::mutex> scoped_lock(lock);
   std::vector<sisyphus::Pattern> patterns_copy;
   for (const auto* pattern : patterns) {
