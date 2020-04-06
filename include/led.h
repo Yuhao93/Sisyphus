@@ -16,6 +16,6 @@ public:
 
 private:
   double intensity_;
-}
+};
 
 #endif

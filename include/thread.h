@@ -1,11 +1,11 @@
 #ifndef THREAD_H
 #define THREAD_H
 
-#include <pthread>
+#include <pthread.h>
 
 class Thread {
 public:
-  void Attach(pthread thread) {
+  void Attach(pthread_t thread) {
     pthread = thread;
   }
   void* RunThread(void* input) {

@@ -1,7 +1,10 @@
 #include "application.h"
 #include "sisyphus_util.h"
 #include "model.pb.h"
+#include "thread.h"
 #include "threads.h"
+#include "pattern_thread.h"
+#include "tcp_thread.h"
 #include <vector>
 #include <cstdio>
 
@@ -38,7 +41,7 @@ int main() {
   }
 
   sisyphus::Pattern pattern = SisyphusUtil::PatternFromCartesianCoordinates(coords);
-  app.pattern_manager.queue_pattern(pattern);
+  app.pattern_manager.QueuePattern(pattern);
 
   threads.Start(pattern_thread);
   threads.Start(tcp_thread);

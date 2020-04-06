@@ -116,9 +116,9 @@ sisyphus::Pattern SisyphusUtil::PatternFromCartesianCoordinates(
 sisyphus::Pattern SisyphusUtil::StoredPatternToPattern(
     const sisyphus::StoredPattern& pattern) {
   if (pattern.has_cartesian()) {
-    return SisyphusUtil::PatternFromCartesianCoordinates(ToVector(pattern.cartesian().coordiate()));
+    return SisyphusUtil::PatternFromCartesianCoordinates(ToVector(pattern.cartesian().coordinate()));
   } else if (pattern.has_polar()) {
-    return SisyphusUtil::PatternFromPolarCoordinates(ToVector(pattern.polar().coordiate()));
+    return SisyphusUtil::PatternFromPolarCoordinates(ToVector(pattern.polar().coordinate()));
   }
   return sisyphus::Pattern();
 }
@@ -126,7 +126,7 @@ sisyphus::Pattern SisyphusUtil::StoredPatternToPattern(
 sisyphus::StoredPattern SisyphusUtil::PatternToPolarStoredPattern(
     const sisyphus::Pattern& pattern) {
   sisyphus::StoredPattern stored_pattern;
-  if (pattern.path_segment_count() == 0) {
+  if (pattern.path_segment_size() == 0) {
       return stored_pattern;
   }
 
