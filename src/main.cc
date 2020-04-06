@@ -42,9 +42,8 @@ int main() {
 
   sisyphus::Pattern pattern = SisyphusUtil::PatternFromCartesianCoordinates(coords);
   app.pattern_manager.QueuePattern(pattern);
-
   threads.Start(pattern_thread);
-  threads.Start(tcp_thread);
+  //threads.Start(tcp_thread);
 
   while(true) {
   }

@@ -1,13 +1,10 @@
 #ifndef THREAD_H
 #define THREAD_H
 
-#include <pthread.h>
+#include <cstdio>
 
 class Thread {
 public:
-  void Attach(pthread_t thread) {
-    pthread = thread;
-  }
   void* RunThread(void* input) {
     Init();
     while(true) {
@@ -17,8 +14,6 @@ public:
 
   virtual void Init() {}
   virtual void Run() = 0;
-  
-  pthread_t pthread;
 };
 
 #endif
