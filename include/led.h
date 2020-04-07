@@ -1,9 +1,6 @@
 #ifndef LED_H
 #define LED_H
 
-#define LED_GPIO_PIN 3
-#define LED_INTENSITY_RANGE 100
-
 class Led {
 public:
   Led();

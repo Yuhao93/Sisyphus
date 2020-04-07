@@ -6,5 +6,5 @@ void* RunThread(void* context) {
 }
 
 ThreadWrapper::ThreadWrapper(Thread* p) {
-  pthead_create(&thread, NULL, &RunThread, p);
+  pthread_create(&thread, NULL, &RunThread, p);
 }

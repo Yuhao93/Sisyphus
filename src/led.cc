@@ -1,16 +1,13 @@
 #include "led.h"
 
-#include "wiring_pi_wrapper.h"
-#include <softPwm.h>
+#include "gpio.h"
 
-Led::Led() {
-  softPwmCreate(LED_GPIO_PIN, 0, LED_INTENSITY_RANGE);
-}
+Led::Led() {}
 
 void Led::setIntensity(double intensity) {
   intensity_ = intensity;
-  int value = (int) (LED_INTENSITY_RANGE * intensity);
-  softPwmWrite(LED_GPIO_PIN, value);
+  int value = (int) (GPIO_LED_RANGE * intensity);
+  Gpio::softPwmWrite(GPIO_LED, value);
 }
 
 double Led::getIntensity() {
