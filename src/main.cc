@@ -11,9 +11,10 @@
 int main() {
   Application app;
   Threads threads;
+  RpcServer rpc_server;
   Thread* pattern_thread = new PatternThread(&app);
-  Thread* tcp_thread = new TcpThread(&app);
-
+  Thread* tcp_thread = new TcpThread(&app, &rpc_server);
+/*
   std::vector<sisyphus::CartesianCoordinate> coords;
   for (int i = 1; i < 25; i++) {
     sisyphus::CartesianCoordinate coord;
@@ -41,9 +42,9 @@ int main() {
   }
 
   sisyphus::Pattern pattern = SisyphusUtil::PatternFromCartesianCoordinates(coords);
-  app.pattern_manager.QueuePattern(pattern);
+  app.pattern_manager.QueuePattern(pattern);*/
   threads.Start(pattern_thread);
-  //threads.Start(tcp_thread);
+  threads.Start(tcp_thread);
 
   while(true) {
   }

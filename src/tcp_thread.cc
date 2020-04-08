@@ -1,7 +1,65 @@
 #include "tcp_thread.h"
 
+namespace {
+  int server_fd;
+  bool socket_setup;
+  sockaddr_in address;
+  int addrlen = sizeof(address);
+  std::string http_response_header = "HTTP/1.1 200 OK\r\n"
+      "Access-Control-Allow-Origin: *\r\n"
+      "\r\n";
+}
+
 void TcpThread::Init() {
+  int opt = 1;
+  if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+    printf("Error creating socket\n");
+    return;
+  }
+  // Forcefully attaching socket to the port 80
+  if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+    printf("Error setting socket options\n");
+    return;
+  }
+  address.sin_family = AF_INET;
+  address.sin_addr.s_addr = INADDR_ANY;
+  address.sin_port = htons(80);
+
+  // Forcefully attaching socket to the port 8080
+  if (bind(server_fd, (sockaddr *) &address, sizeof(address)) < 0) {
+    printf("Error binding socket\n");
+    return;
+  }
+  if (listen(server_fd, 3) < 0) {
+    printf("Error listening\n");
+    return;
+  }
+  socket_setup = true;
 }
 
 void TcpThread::Run() {
+  if (!socket_setup) {
+    return;
+  }
+  int socket;
+  if ((socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*) &addrlen)) < 0) {
+    printf("ERROR accepting socket!\n");
+    return;
+  }
+
+  char buffer[2048] = {0};
+  int val_read = read(new_socket, buffer, 2048);
+  printf("%s\n", buffer);
+  std::string request = buffer;
+
+  std::size_t index = request.find("\r\n\r\n");
+  std::string response = http_response_header;
+  if (index == std::string::npos) {
+    printf("Invalid Request\n");
+  } else {
+    std::string payload =
+        request.substr(index + 4) + rpc_server_->HandleMessage(payload, app_);
+  }
+  send(socket, response, strlen(response), 0);
+  close(new_socket);
 }
