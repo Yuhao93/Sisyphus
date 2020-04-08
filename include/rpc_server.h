@@ -19,7 +19,7 @@ private:
   const std::string HandleDeletePattern(std::string request_string, Application* app);
   const std::string HandleGetPatterns(std::string request_string, Application* app);
 
-  std::map<std::string, std::function<const std::string(std::string)>> service_handlers;
+  std::map<std::string, std::function<const std::string(std::string, Application*)>> service_handlers;
 };
 
 #endif

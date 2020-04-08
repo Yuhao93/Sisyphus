@@ -22,7 +22,7 @@
 
 namespace Gpio {
   void setup();
-  void softPwmWrite(int pin, int value);
+  void pwmWrite(int pin, int value);
   void write(int pin, int value);
   int read(int pin);
 }

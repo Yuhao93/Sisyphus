@@ -7,7 +7,7 @@ Led::Led() {}
 void Led::setIntensity(double intensity) {
   intensity_ = intensity;
   int value = (int) (GPIO_LED_RANGE * intensity);
-  Gpio::softPwmWrite(GPIO_LED, value);
+  Gpio::pwmWrite(GPIO_LED, value);
 }
 
 double Led::getIntensity() {

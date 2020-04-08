@@ -3,7 +3,11 @@
 #include "application.h"
 #include "model.pb.h"
 #include "server.pb.h"
+#include "sisyphus_util.h"
+#include <google/protobuf/text_format.h>
 #include <string>
+
+using google::protobuf::TextFormat;
 
 RpcServer::RpcServer() {
   service_handlers["sisyphus.SisyphusService.SetLedIntensity"] =
@@ -45,44 +49,44 @@ const std::string RpcServer::HandleSetLedIntensity(
     std::string request_string, Application* app) {
   sisyphus::SetLedIntensityRequest request;
   sisyphus::SetLedIntensityResponse response;
-  request.ParseFromString(request_string);
+  TextFormat::ParseFromString(request_string, &request);
   app->led.setIntensity(request.intensity());
-  return response.SerializeAsString();
+  return response.DebugString();
 }
 
 const std::string RpcServer::HandleGetLedIntensity(
     std::string request_string, Application* app) {
   sisyphus::GetLedIntensityRequest request;
   sisyphus::GetLedIntensityResponse response;
-  request.ParseFromString(request_string);
+  TextFormat::ParseFromString(request_string, &request);
   response.set_intensity(app->led.getIntensity());
-  return response.SerializeAsString();
+  return response.DebugString();
 }
 
 const std::string RpcServer::HandleInsertPattern(
     std::string request_string, Application* app) {
   sisyphus::InsertPatternRequest request;
   sisyphus::InsertPatternResponse response;
-  request.ParseFromString(request_string);
-  app->pattern_manager.QueuePattern(StoredPatternToPattern(request.pattern()));
-  return response.SerializeAsString();
+  TextFormat::ParseFromString(request_string, &request);
+  app->pattern_manager.QueuePattern(SisyphusUtil::StoredPatternToPattern(request.pattern()));
+  return response.DebugString();
 }
 
 const std::string RpcServer::HandleDeletePattern(
     std::string request_string, Application* app) {
   sisyphus::DeletePatternRequest request;
   sisyphus::DeletePatternResponse response;
-  request.ParseFromString(request_string);
-  return response.SerializeAsString();
+  TextFormat::ParseFromString(request_string, &request);
+  return response.DebugString();
 }
 
 const std::string RpcServer::HandleGetPatterns(
     std::string request_string, Application* app) {
   sisyphus::GetPatternsRequest request;
   sisyphus::GetPatternsResponse response;
-  request.ParseFromString(request_string);
+  TextFormat::ParseFromString(request_string, &request);
   for (const auto& pattern : app->pattern_manager.ListPatterns()) {
-    *response.add_upcoming_patterns() = PatternToPolarStoredPattern(pattern);
+    *response.add_upcoming_patterns() = SisyphusUtil::PatternToPolarStoredPattern(pattern);
   }
-  return response.SerializeAsString();
+  return response.DebugString();
 }

@@ -2,6 +2,7 @@
 
 #include "wiring_pi_wrapper.h"
 #include <softPwm.h>
+#include <cstdio>
 
 int linear_mode[] = {HIGH, HIGH, HIGH};
 int angle_mode[] = {HIGH, HIGH, HIGH};
@@ -28,7 +29,8 @@ void Gpio::setup() {
   digitalWrite(GPIO_STEPPER_MOTORS_LINEAR_MODE_3, linear_mode[2]);
 }
 
-void Gpio::softPwmWrite(int pin, int value) {
+void Gpio::pwmWrite(int pin, int value) {
+  printf("%d %d\n", pin, value);
   softPwmWrite(pin, value); 
 }
 

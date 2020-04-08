@@ -1,5 +1,11 @@
 #include "tcp_thread.h"
 
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+
 namespace {
   int server_fd;
   bool socket_setup;
@@ -48,7 +54,7 @@ void TcpThread::Run() {
   }
 
   char buffer[2048] = {0};
-  int val_read = read(new_socket, buffer, 2048);
+  int val_read = read(socket, buffer, 2048);
   printf("%s\n", buffer);
   std::string request = buffer;
 
@@ -57,9 +63,9 @@ void TcpThread::Run() {
   if (index == std::string::npos) {
     printf("Invalid Request\n");
   } else {
-    std::string payload =
-        request.substr(index + 4) + rpc_server_->HandleMessage(payload, app_);
+    std::string payload = request.substr(index + 4);
+    response += rpc_server_->HandleMessage(payload, app_);
   }
-  send(socket, response, strlen(response), 0);
-  close(new_socket);
+  send(socket, response.c_str(), strlen(response.c_str()), 0);
+  close(socket);
 }
