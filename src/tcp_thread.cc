@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sstream>
 #include <stdlib.h>
 #include <netinet/in.h>
 
@@ -53,16 +54,16 @@ void TcpThread::Run() {
     return;
   }
 
+  std::ostringstream oss;
   char buffer[2048] = {0};
-  int val_read = read(socket, buffer, 2048);
-  printf("%s\n", buffer);
-  std::string request = buffer;
-
+  int bytes_read = read(socket, buffer, 2048);
+  while (bytes_read != 0) {
+    oss.write(buffer, bytes_read);
+  }
+  std::string request = oss.str();
   std::size_t index = request.find("\r\n\r\n");
   std::string response = http_response_header;
-  if (index == std::string::npos) {
-    printf("Invalid Request\n");
-  } else {
+  if (index != std::string::npos) {
     std::string payload = request.substr(index + 4);
     response += rpc_server_->HandleMessage(payload, app_);
   }
