@@ -30,7 +30,6 @@ void Gpio::setup() {
 }
 
 void Gpio::pwmWrite(int pin, int value) {
-  printf("%d %d\n", pin, value);
   softPwmWrite(pin, value); 
 }
 

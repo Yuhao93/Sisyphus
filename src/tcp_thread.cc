@@ -3,9 +3,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
-#include <sstream>
 #include <stdlib.h>
 #include <netinet/in.h>
+#include <cstdlib>
+#include <chrono>
+#include <sstream>
+#include <iostream>
 
 namespace {
   int server_fd;
@@ -15,6 +18,57 @@ namespace {
   std::string http_response_header = "HTTP/1.1 200 OK\r\n"
       "Access-Control-Allow-Origin: *\r\n"
       "\r\n";
+}
+
+bool TooLong(std::chrono::time_point<std::chrono::system_clock> timestamp) {
+  auto now = std::chrono::system_clock::now();
+  std::chrono::duration<double> seconds = now - timestamp;
+  return seconds.count() > 60;
+}
+
+std::string GetPayload(int socket) {
+  auto timestamp = std::chrono::system_clock::now();
+  char buffer[2048];
+  std::ostringstream oss;
+  std::string current_string;
+  int bytes_read;
+  std::string content_length_search = "Content-Length: ";
+  do {
+    if (TooLong(timestamp)) {
+      printf("Could not find Content-Length\n");
+      return "";  
+    }
+    bytes_read = read(socket, buffer, 2048);
+    oss.write(buffer, bytes_read);
+    current_string = oss.str();
+  } while (current_string.find(content_length_search) == std::string::npos);
+  int content_length_index = current_string.find(content_length_search);
+  int start_of_content_length = content_length_index + content_length_search.length();
+  int end_of_content_length = current_string.find("\r\n", content_length_index);
+  std::string content_length_string = current_string.substr(start_of_content_length, end_of_content_length - start_of_content_length);
+  int content_length = atoi(content_length_string.c_str());
+  printf("Content-Length is %d\n", content_length);
+  while (current_string.find("\r\n\r\n") == std::string::npos) {
+    if (TooLong(timestamp)) {
+      printf("Could not find Content start\n");
+      return "";  
+    }
+    bytes_read = read(socket, buffer, 2048);
+    oss.write(buffer, bytes_read);
+    current_string = oss.str();
+  }
+
+  int content_start = current_string.find("\r\n\r\n") + 4;
+  while (content_start + content_length > current_string.length()) {
+    if (TooLong(timestamp)) {
+      printf("Could not finish reading Content\n");
+      return "";  
+    }
+    bytes_read = read(socket, buffer, 2048);
+    oss.write(buffer, bytes_read);
+    current_string = oss.str();
+  }
+  return current_string.substr(content_start, content_length);
 }
 
 void TcpThread::Init() {
@@ -54,17 +108,9 @@ void TcpThread::Run() {
     return;
   }
 
-  std::ostringstream oss;
-  char buffer[2048] = {0};
-  int bytes_read = read(socket, buffer, 2048);
-  while (bytes_read != 0) {
-    oss.write(buffer, bytes_read);
-  }
-  std::string request = oss.str();
-  std::size_t index = request.find("\r\n\r\n");
+  std::string payload = GetPayload(socket);
   std::string response = http_response_header;
-  if (index != std::string::npos) {
-    std::string payload = request.substr(index + 4);
+  if (payload.length() > 0) {
     response += rpc_server_->HandleMessage(payload, app_);
   }
   send(socket, response.c_str(), strlen(response.c_str()), 0);
