@@ -102,6 +102,7 @@ ParametricProcessor::GetCoordinatesFromParametricFunction(
         coordinate.set_y(y_or_r * sin(x_or_theta));
         break;
     }
+    result.push_back(coordinate);
   }
   return result;
 }

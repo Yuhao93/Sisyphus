@@ -18,6 +18,13 @@ void polar_to_point(
   point->set_linear_value((int) (LINEAR_STEPS_PER_SWEEP * polar.r()));
 }
 
+void point_to_polar(
+    sisyphus::PolarCoordinate* polar,
+    const sisyphus::Segment_Point& point) {
+  polar->set_a((float) (point.angular_value() * 2 * SisyphusUtil::pi) / (float) ANGULAR_STEPS_PER_REVOLUTION);
+  polar->set_r((float) point.linear_value() / (float) LINEAR_STEPS_PER_SWEEP);
+}
+
 sisyphus::Segment segment_from_points(
     const sisyphus::PolarCoordinate& start,
     const sisyphus::PolarCoordinate& end) {
@@ -136,12 +143,10 @@ sisyphus::StoredPattern SisyphusUtil::PatternToPolarStoredPattern(
 
   sisyphus::PolarCoordinate* coord =
       stored_pattern.mutable_polar()->add_coordinate();
-  coord->set_a(pattern.path_segment(0).start().angular_value());
-  coord->set_r(pattern.path_segment(0).start().linear_value());
+  point_to_polar(coord, pattern.path_segment(0).start());
   for (const auto& segment : pattern.path_segment()) {
     coord = stored_pattern.mutable_polar()->add_coordinate();
-    coord->set_a(segment.end().angular_value());
-    coord->set_r(segment.end().linear_value());
+    point_to_polar(coord, segment.end());
   }
 
   return stored_pattern;

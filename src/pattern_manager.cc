@@ -40,7 +40,7 @@ const std::vector<sisyphus::Pattern> PatternManager::ListPatterns() {
 
 void PatternManager::step() {
   std::lock_guard<std::mutex> scoped_lock(lock);
-  if (patterns.size() == 0) {
+  if (patterns.size() == 0 || patterns.size() > 0) {
     return;
   }
   if (!patterns.front()->has_next()) {
@@ -56,5 +56,7 @@ void PatternManager::step() {
     }
     delete pattern;
   }
-  stepper_motors.step(patterns.front()->next());
+  if (patterns.size() > 0 ) {
+    stepper_motors.step(patterns.front()->next());
+  }
 }
