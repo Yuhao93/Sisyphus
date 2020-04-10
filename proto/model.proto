@@ -95,6 +95,9 @@ message ParametricPattern {
         ACOS = 5;
         ATAN = 6;
         NEGATIVE = 7;
+        STEP = 8;
+        SIGN = 9;
+        ABS = 10;
       }
       optional Equation equation = 1;
       optional UnaryOperationType operation = 2;

@@ -2,6 +2,7 @@
 
 #include "model.pb.h"
 #include "table_constants.h"
+#include "parametric_processor.h"
 #include <vector>
 #include <cmath>
 #include <cstdio>
@@ -119,6 +120,9 @@ sisyphus::Pattern SisyphusUtil::StoredPatternToPattern(
     return SisyphusUtil::PatternFromCartesianCoordinates(ToVector(pattern.cartesian().coordinate()));
   } else if (pattern.has_polar()) {
     return SisyphusUtil::PatternFromPolarCoordinates(ToVector(pattern.polar().coordinate()));
+  } else if (pattern.has_parametric()) {
+    return SisyphusUtil::PatternFromCartesianCoordinates(
+        ParametricProcessor::GetCoordinatesFromParametricFunction(pattern.parametric()));
   }
   return sisyphus::Pattern();
 }
