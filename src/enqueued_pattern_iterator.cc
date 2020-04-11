@@ -146,6 +146,10 @@ void setALWithOctant(int octant, int& a, int& l, int x, int y) {
 }
 
 EnqueuedPatternIterator::EnqueuedPatternIterator(const sisyphus::Pattern& pattern) : p(pattern) {
+  reset();
+}
+
+void EnqueuedPatternIterator::reset() {
   if (p.path_segment().size() < 1) {
     return;
   }

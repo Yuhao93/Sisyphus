@@ -16,6 +16,7 @@ public:
   bool has_next() const;
   const sisyphus::Step& next();
   bool is_external_pattern() const;
+  void reset();
 
 private:
   void initializeSegment(const sisyphus::Segment& segment);

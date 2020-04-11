@@ -4,13 +4,19 @@
 #include "abstract_pattern_iterator.h"
 #include "model.pb.h"
 
-#define INTIALIZING_STAGE_ZEROING 1
-#define INTIALIZING_STAGE_TARGETING 2
+#define INITIALIZING_STAGE_ZEROING 1
+#define INITIALIZING_STAGE_CENTERING 2
+#define INITIALIZING_STAGE_CLEARING 3
+#define INITIALIZING_STAGE_TARGETING 4
+
+#define ZEROING_THRESHOLD 100
 
 /**
  * Pattern iterator that:
- * 1) resets the linear position to 0.
- * 2) Moves the linear position to the starting position of the given pattern.
+ * 1) resets the linear position to 0
+ * 2) moves the linear position to be at the center
+ * 3) sweeps through the entire visible range to clear all marks
+ * 4) backtracks to where the target is
  */
 class InitializingPatternIterator : public AbstractPatternIterator {
 public:
@@ -23,6 +29,8 @@ private:
   int target;
   int current;
   int stage;
+  int zero_count;
+  int center_steps;
   bool complete;
 };
 

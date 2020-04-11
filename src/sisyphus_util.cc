@@ -15,14 +15,14 @@ void polar_to_point(
   point->set_angular_value(
       (int) (ANGULAR_STEPS_PER_REVOLUTION *
           SisyphusUtil::ClampBetween2Pi(polar.a()) / (2 * SisyphusUtil::pi)));
-  point->set_linear_value((int) (LINEAR_STEPS_PER_SWEEP * polar.r()));
+  point->set_linear_value((int) (LINEAR_RANGE_STEPS * polar.r()));
 }
 
 void point_to_polar(
     sisyphus::PolarCoordinate* polar,
     const sisyphus::Segment_Point& point) {
   polar->set_a((float) (point.angular_value() * 2 * SisyphusUtil::pi) / (float) ANGULAR_STEPS_PER_REVOLUTION);
-  polar->set_r((float) point.linear_value() / (float) LINEAR_STEPS_PER_SWEEP);
+  polar->set_r((float) point.linear_value() / (float) LINEAR_RANGE_STEPS);
 }
 
 sisyphus::Segment segment_from_points(
