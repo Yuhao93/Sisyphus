@@ -21,7 +21,7 @@ PatternManager::PatternManager() {
 
 void PatternManager::QueuePattern(const sisyphus::Pattern& pattern) {
   std::lock_guard<std::mutex> scoped_lock(lock);
-  //patterns.push_back(new InitializingPatternIterator(pattern));
+  patterns.push_back(new InitializingPatternIterator(pattern));
   patterns.push_back(new EnqueuedPatternIterator(pattern));
 }
 
