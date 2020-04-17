@@ -176,7 +176,7 @@ bool EnqueuedPatternIterator::is_external_pattern() const {
   return true;
 }
 
-const sisyphus::Step& EnqueuedPatternIterator::next() {
+sisyphus::Step EnqueuedPatternIterator::next() {
   bool is_flipped = isFlipped(octant);
   sisyphus::Step::Movement a_dir = sisyphus::Step::STOP;
   sisyphus::Step::Movement l_dir = sisyphus::Step::STOP;

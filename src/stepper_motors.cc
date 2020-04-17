@@ -36,10 +36,9 @@ void StepperMotors::step(const sisyphus::Step& step) {
   sisyphus::Step_Movement linear_movement = step.linear_movement();
   prepare(GPIO_STEPPER_MOTORS_ANGLE_DIR, angular_movement);
   prepare(GPIO_STEPPER_MOTORS_LINEAR_DIR, linear_movement);
-  delay(1);
   begin(GPIO_STEPPER_MOTORS_ANGLE_STEP, angular_movement);
   begin(GPIO_STEPPER_MOTORS_LINEAR_STEP, linear_movement);
-  delay(1);
+  delayMicroseconds(1000);
   end(GPIO_STEPPER_MOTORS_ANGLE_STEP, angular_movement);
   end(GPIO_STEPPER_MOTORS_LINEAR_STEP, linear_movement);
 }

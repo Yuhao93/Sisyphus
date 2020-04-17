@@ -2,6 +2,7 @@
 #define INITIALIZING_PATTERN_ITERATOR_H
 
 #include "abstract_pattern_iterator.h"
+#include "enqueued_pattern_iterator.h"
 #include "model.pb.h"
 
 #define INITIALIZING_STAGE_ZEROING 1
@@ -22,7 +23,7 @@ class InitializingPatternIterator : public AbstractPatternIterator {
 public:
   InitializingPatternIterator(const sisyphus::Pattern& pattern);
   bool has_next() const;
-  const sisyphus::Step& next();
+  sisyphus::Step next();
   bool is_external_pattern() const;
 
 private:
@@ -32,6 +33,8 @@ private:
   int zero_count;
   int center_steps;
   bool complete;
+  EnqueuedPatternIterator clearing_pattern;
+  EnqueuedPatternIterator targeting_pattern;
 };
 
 #endif

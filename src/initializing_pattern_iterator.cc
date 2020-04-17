@@ -25,7 +25,7 @@ EnqueuedPatternIterator SweepPattern() {
   auto* theta = pattern->mutable_equation_for_x_or_theta()->mutable_binary_equation();
   theta->set_operation(sisyphus::ParametricPattern_Equation_BinaryEquation::DIVIDE);
   theta->mutable_equation_left()->set_variable(sisyphus::ParametricPattern_Equation::T);
-  theta->mutable_equation_right()->set_constant(15);
+  theta->mutable_equation_right()->set_constant(20);
 
   auto* r = pattern->mutable_equation_for_y_or_r()->mutable_binary_equation();
   r->set_operation(sisyphus::ParametricPattern_Equation_BinaryEquation::MULTIPLY);
@@ -48,7 +48,7 @@ EnqueuedPatternIterator TargetPattern() {
   auto* theta = pattern->mutable_equation_for_x_or_theta()->mutable_binary_equation();
   theta->set_operation(sisyphus::ParametricPattern_Equation_BinaryEquation::DIVIDE);
   theta->mutable_equation_left()->set_variable(sisyphus::ParametricPattern_Equation::T);
-  theta->mutable_equation_right()->set_constant(-15);
+  theta->mutable_equation_right()->set_constant(-20);
 
   auto* r = pattern->mutable_equation_for_y_or_r()->mutable_binary_equation();
   r->set_operation(sisyphus::ParametricPattern_Equation_BinaryEquation::SUBTRACT);
@@ -69,19 +69,24 @@ EnqueuedPatternIterator sweep_in = TargetPattern();
 
 InitializingPatternIterator::InitializingPatternIterator(const sisyphus::Pattern& pattern)
     : stage(INITIALIZING_STAGE_ZEROING), current(0), complete(false),
-    zero_count(0), center_steps(0) {
+    zero_count(0), center_steps(0), clearing_pattern(sweep_out), 
+    targeting_pattern(sweep_in) {
   if (pattern.path_segment().size() < 1) {
     return;
   }
+  clearing_pattern.reset();
+  targeting_pattern.reset();
   target = pattern.path_segment(0).start().linear_value();
 }
 
 bool InitializingPatternIterator::has_next() const {
-  return complete;
+  return !complete;
 }
 
-const sisyphus::Step& InitializingPatternIterator::next() {
+sisyphus::Step InitializingPatternIterator::next() {
   sisyphus::Step step;
+  step.set_angular_movement(sisyphus::Step::STOP);
+  step.set_linear_movement(sisyphus::Step::STOP);
   switch (stage) {
     case INITIALIZING_STAGE_ZEROING:
       if (Gpio::read(GPIO_LINEAR_FEEDBACK) == LOW) {
@@ -89,8 +94,10 @@ const sisyphus::Step& InitializingPatternIterator::next() {
         step.set_linear_movement(sisyphus::Step::BACKWARDS);
       } else {
         if (++zero_count == ZEROING_THRESHOLD) {
+          printf("CENTERING\n");
           stage = INITIALIZING_STAGE_CENTERING;
         }
+
       }
       break;
 
@@ -99,40 +106,44 @@ const sisyphus::Step& InitializingPatternIterator::next() {
         step.set_linear_movement(sisyphus::Step::FORWARDS);
         center_steps++;
       } else {
+        printf("CLEARING\n");
         stage = INITIALIZING_STAGE_CLEARING;
       }
       break;
 
     case INITIALIZING_STAGE_CLEARING:
-      if (sweep_out.has_next()) {
-        const sisyphus::Step& s = sweep_out.next();
+      if (clearing_pattern.has_next()) {
+        const sisyphus::Step& s = clearing_pattern.next();
         step.set_linear_movement(s.linear_movement());
         step.set_angular_movement(s.angular_movement());
         if (s.linear_movement() == sisyphus::Step::FORWARDS) {
           current++;
         }
       } else {
+        printf("TARGETING\n");
         stage = INITIALIZING_STAGE_TARGETING;
       }
       break;
 
     case INITIALIZING_STAGE_TARGETING:
-      if (!sweep_out.has_next()) {
+      if (!targeting_pattern.has_next()) {
+        printf("DONE\n");
         complete = true;
         break;
       }
-      const sisyphus::Step& s = sweep_out.next();
+      const sisyphus::Step& s = targeting_pattern.next();
       step.set_linear_movement(s.linear_movement());
       step.set_angular_movement(s.angular_movement());
       if (s.linear_movement() == sisyphus::Step::BACKWARDS) {
         current--;
       }
       if (current <= target) {
+        printf("DONE\n");
         complete = true;
       }
       break;
   }
-  return std::move(step);
+  return step;
 }
 
 bool InitializingPatternIterator::is_external_pattern() const {

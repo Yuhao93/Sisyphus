@@ -10,7 +10,7 @@
 class AbstractPatternIterator {
  public:
   virtual bool has_next() const = 0;
-  virtual const sisyphus::Step& next() = 0;
+  virtual sisyphus::Step next() = 0;
   virtual bool is_external_pattern() const = 0;
 };
 
