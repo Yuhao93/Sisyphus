@@ -87,7 +87,6 @@ const std::string RpcServer::HandleGetPatterns(
   sisyphus::GetPatternsResponse response;
   request.ParseFromString(Base64::Decode(request_string));
   for (const auto& pattern : app->pattern_manager.ListPatterns()) {
-    printf("Pattern!\n");
     *response.add_upcoming_patterns() = SisyphusUtil::PatternToPolarStoredPattern(pattern);
   }
   return Base64::Encode(response.SerializeAsString());

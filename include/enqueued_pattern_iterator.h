@@ -14,7 +14,7 @@ public:
   EnqueuedPatternIterator(const sisyphus::Pattern& pattern);
   const sisyphus::Pattern& pattern() const;
   bool has_next() const;
-  const sisyphus::Step& next();
+  sisyphus::Step next();
   bool is_external_pattern() const;
   void reset();
 
