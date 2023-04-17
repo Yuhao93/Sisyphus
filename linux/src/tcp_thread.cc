@@ -17,6 +17,7 @@ namespace {
   int addrlen = sizeof(address);
   std::string http_response_header = "HTTP/1.1 200 OK\r\n"
       "Access-Control-Allow-Origin: *\r\n"
+      "Access-Control-Allow-Private-Network: true\r\n"
       "\r\n";
 }
 
