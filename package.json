@@ -1,0 +1,24 @@
+{
+  "name": "sisyphus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "node/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yuhao93/Sisyphus.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yuhao93/Sisyphus/issues"
+  },
+  "homepage": "https://github.com/Yuhao93/Sisyphus#readme",
+  "dependencies": {
+    "bleno": "^0.5.0",
+    "google-protobuf": "^3.21.2",
+    "rpio": "^2.4.2"
+  }
+}
