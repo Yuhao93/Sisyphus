@@ -9,4 +9,4 @@ async function doPatternLoop() {
   setImmediate(doPatternLoop);
 }
 
-doPatternLoop();
+//doPatternLoop();
