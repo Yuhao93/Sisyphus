@@ -49,7 +49,7 @@ function handle(signature, requestBinary, patternManager) {
   if (!handler) {
     return new Uint8Array([1]);
   }
-  const request = handler[0].deserialzeBinary(requestBinary);
+  const request = handler[0].deserializeBinary(requestBinary);
   const response = handler[1](request, patternManager);
   return response.serializeBinary();
 }
