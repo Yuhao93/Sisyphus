@@ -3,8 +3,26 @@ const ServiceHandler = require('./service_handler');
 
 const name = 'Sisyphus Table';
 const serviceUuid = '6d081fa1965e48e79aec2d122334954b';
+
 let p = null;
-let currentRequest = null;
+let resultCallback = null;
+let clearWrites = [];
+
+function createResultPromise() {
+  return new Promise((resolve, reject) => {
+    resultCallback = resolve;
+  });
+}
+
+function readyForWritePromise() {
+  return new Promise((resolve, reject) => {
+    clearWrites.push(resolve);
+  });
+}
+
+let result = createResultPromise();
+let pendingWrite = null;
+
 const poweredOn = new Promise((resolve, reject) => {
 	bleno.on('stateChange', (state) => {
 		console.log('Bluetooth State Changed: ' + state);
@@ -23,39 +41,55 @@ function descriptorName(name) {
 
 async function onWriteRequest(data, offset, withoutResponse, callback) {
 	console.log('Bluetooth received Write');
-  if (currentRequest != null) {
-    await currentRequest;
+
+  
+  const currentPendingWrite = pendingWrite;
+  pendingWrite = readyForWritePromise();
+  if (currentPendingWrite != null) {
+    await currentPendingWrite;
   }
   const request = JSON.parse(data.toString('utf8'));
-  currentRequest = new Promise((resolve, reject) => {
-    resolve(ServiceHandler.handle(request.type, request.payload, p));
-  });
+  const payload = Buffer.from(request.payload, 'base64');
+  ServiceHandler.handle(request.type, payload, p);
+  resultCallback(content);
   callback(bleno.Characteristic.RESULT_SUCCESS);
 }
 
-async function onSubscribe(maxValueSize, updateValueCallback) {
-	console.log('Bluetooth received Subscribe');
-  if (currentRequest == null) {
-    return;
-  }
-  updateValueCallback(await currentRequest);
-  currentRequest = null;
+async function onReadRequest() {
+	console.log('Bluetooth received Read');
+
+  const data = await result;
+  callback = null;
+  result = createResultPromise();
+  clearWrites.shift()();
+  pendingWrite = null;
+  return data;
 }
 
 async function initializeBluetooth(patternManager) {
 	await poweredOn;
   p = patternManager;
-  const rpcCharacteristic = new bleno.Characteristic({
-      uuid: 'fff0',
-      properties: [ 'notify', 'write' ],
-      descriptors: [ descriptorName('TableConnection') ],
-      onSubscribe,
-      onWriteRequest
+
+  const rpcRequestCharacteristic = new bleno.Characteristic({
+    uuid: 'fff0',
+    properties: ['write'],
+    descriptors: [ descriptorName('Send') ],
+    onWriteRequest
+  });
+
+  const rpcResponseCharacteristic = new bleno.Characteristic({
+    uuid: 'fff1',
+    properties: ['read'],
+    descriptors: [ descriptorName('Read') ],
+    onReadRequest
   });
 
   const primaryService = new bleno.PrimaryService({
       uuid: serviceUuid,
-      characteristics: [ rpcCharacteristic ]
+      characteristics: [
+        rpcRequestCharacteristic,
+        rpcResponseCharacteristic
+      ]
   });
 
   bleno.setServices([primaryService]);
