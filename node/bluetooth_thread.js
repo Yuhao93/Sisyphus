@@ -3,10 +3,18 @@ const ServiceHandler = require('./service_handler');
 
 const name = 'Sisyphus Table';
 const serviceUuid = '6d081fa1965e48e79aec2d122334954b';
+const textEncoder = new TextEncoder();
 
 let p = null;
 let resultCallback = null;
 let clearWrites = [];
+
+let writeAuthor = null;
+let writeComplete = false;
+let writeBuffer = '';
+
+let readComplete = false;
+let readBuffer = null;
 
 function createResultPromise() {
   return new Promise((resolve, reject) => {
@@ -42,17 +50,29 @@ function descriptorName(name) {
 async function onWriteRequest(data, offset, withoutResponse, callback) {
 	console.log('Bluetooth received Write');
 
-  
-  const currentPendingWrite = pendingWrite;
-  pendingWrite = readyForWritePromise();
-  if (currentPendingWrite != null) {
-    await currentPendingWrite;
+  const author = new Uint8Array(data, 0, 4);
+
+  if (!writeComplete && writeAuthor != null && writeAuthor != author) {
+    const currentPendingWrite = pendingWrite;
+    pendingWrite = readyForWritePromise();
+    if (currentPendingWrite != null) {
+      await currentPendingWrite;
+    }
   }
-  const request = JSON.parse(data.toString('utf8'));
-  const payload = Buffer.from(request.payload, 'base64');
-  ServiceHandler.handle(request.type, payload, p);
-  resultCallback(content);
-  callback(bleno.Characteristic.RESULT_SUCCESS);
+
+  writeComplete = false;
+  writeAuthor = author;
+  const complete = String.fromCharCode(new Uint8Array(data, 4, 1)[0]) == '1';
+  writeBuffer += textEncoder.decode(new Uint8Array(data, 5));
+
+  if (complete) {
+    writeComplete = true;
+    const request = JSON.parse(writeBuffer);
+    const payload = Buffer.from(request.payload, 'base64');
+    ServiceHandler.handle(request.type, payload, p);
+    resultCallback(content);
+    callback(bleno.Characteristic.RESULT_SUCCESS);
+  }
 }
 
 async function onReadRequest() {
@@ -85,11 +105,11 @@ async function initializeBluetooth(patternManager) {
   });
 
   const primaryService = new bleno.PrimaryService({
-      uuid: serviceUuid,
-      characteristics: [
-        rpcRequestCharacteristic,
-        rpcResponseCharacteristic
-      ]
+    uuid: serviceUuid,
+    characteristics: [
+      rpcRequestCharacteristic,
+      rpcResponseCharacteristic
+    ]
   });
 
   bleno.setServices([primaryService]);
