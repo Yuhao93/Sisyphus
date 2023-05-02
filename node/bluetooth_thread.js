@@ -48,11 +48,13 @@ async function onWriteRequest(data, offset, withoutResponse, callback) {
   if (currentPendingWrite != null) {
     await currentPendingWrite;
   }
-  const request = JSON.parse(data.toString('utf8'));
+	console.log(data.toString('utf8'))
+  /*const request = JSON.parse(data.toString('utf8'));
   const payload = Buffer.from(request.payload, 'base64');
   ServiceHandler.handle(request.type, payload, p);
   resultCallback(content);
   callback(bleno.Characteristic.RESULT_SUCCESS);
+  */
 }
 
 async function onReadRequest() {
