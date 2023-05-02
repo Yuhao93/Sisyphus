@@ -52,7 +52,7 @@ async function onWriteRequest(data, offset, withoutResponse, callback) {
 
   const author = new Uint8Array(data, 0, 4);
 
-  if (!writeComplete && writeAuthor != null && writeAuthor != author) {
+  if (!writeComplete && writeAuthor != null && writeAuthor.toString() != author.toString()) {
     const currentPendingWrite = pendingWrite;
     pendingWrite = readyForWritePromise();
     if (currentPendingWrite != null) {
