@@ -16,7 +16,7 @@ const GPIO_LINEAR_FEEDBACK = 22;
 
 /** NOTE: HAD  TO CHANGE FROM 15 TO 12 */
 const GPIO_LED = 12;
-const GPIO_LED_RANGE = 100;
+const GPIO_LED_RANGE = 512;
 
 const linear_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
 const angle_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
@@ -37,7 +37,7 @@ function setup() {
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_3, rpio.OUTPUT);
   rpio.open(GPIO_LINEAR_FEEDBACK, rpio.INPUT);
   rpio.open(GPIO_LED, rpio.PWM)
-  rpio.pwmSetClockDivider(64);
+  rpio.pwmSetClockDivider(256);
   rpio.pwmSetRange(GPIO_LED, GPIO_LED_RANGE);
 
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_1, angle_mode[0]);

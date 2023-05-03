@@ -3,8 +3,8 @@ const gpio = require('./gpio');
 let v;
 
 function setIntensity(intensity) {
-  v = intensity;
-  const valueInRange = Math.floor(gpio.GPIO_LED_RANGE * intensity);
+  v = Math.max(Math.min(1, intensity), 0);
+  const valueInRange = Math.floor(gpio.GPIO_LED_RANGE * v);
   gpio.pwmWrite(valueInRange);
 }
 
