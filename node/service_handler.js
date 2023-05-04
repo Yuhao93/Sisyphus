@@ -17,7 +17,8 @@ async function handleGetLedIntensity(request, patternManager) {
 
 async function handleInsertPattern(request, patternManager) {
 	const id = request.getPattern();
-	const patternB64 = await Firebase.getPattern(id);
+	const pattern = await Firebase.getPattern(id);
+	const patternB64 = pattern.data().pattern
 	const patternBuffer = Buffer.from(patternB64, 'base64');
 	const storedPattern = Model.StoredPattern.deserializeBinary(patternBuffer);	
 

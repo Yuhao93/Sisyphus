@@ -4,7 +4,7 @@ const {getCoordinatesFromParametricFunction} = require('./parametric_processor')
 
 function polarToPoint(polar) {
   const point = new Model.Segment.Point();
-  point.setAngularValue(Math.floor(ANGULAR_STEPS_PER_REVOLUTION * ClampBetween2Pi(polar.getA()) / (2 * Math.PI)));
+  point.setAngularValue(Math.floor(ANGULAR_STEPS_PER_REVOLUTION * clampBetween2Pi(polar.getA()) / (2 * Math.PI)));
   point.setLinearValue(Math.floor(LINEAR_RANGE_STEPS * polar.getR()));
   return point;
 }
@@ -17,7 +17,7 @@ function pointToPolar(point) {
 }
 
 function segmentFromPoints(start, end) {
-  const segment = Model.Segment();
+  const segment = new Model.Segment();
   segment.setStart(polarToPoint(start));
   segment.setEnd(polarToPoint(end));
   return segment;
@@ -53,7 +53,7 @@ function polarFromCartesian(coordinate) {
   const y = coordinate.getY();
   const r = Math.sqrt(x * x + y * y);
   const a = Math.atan2(y, x);
-  const newCoordinate = Model.PolarCoordinate();
+  const newCoordinate = new Model.PolarCoordinate();
   newCoordinate.setR(r);
   newCoordinate.setA(a);
   return newCoordinate;
@@ -69,7 +69,7 @@ function patternFromPolarCoordinates(coordinates) {
     return p;
   }
   let prev = coordinates[0];
-  for (let i = 1; i < coordinates.size(); i++) {
+  for (let i = 1; i < coordinates.length; i++) {
     const current = coordinates[i];
     const segment = segmentFromPoints(prev, current);
     if (!segmentIsPoint(segment)) {

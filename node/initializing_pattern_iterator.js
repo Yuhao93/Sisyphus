@@ -44,13 +44,13 @@ function sweepPattern() {
   parametricPattern.setType(Model.ParametricPattern.Type.POLAR);
 
   const theta = new Model.ParametricPattern.Equation.BinaryEquation();
-  theta.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryEquationType.DIVIDE);
+  theta.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.DIVIDE);
   theta.setEquationLeft(variable());
   theta.setEquationRight(constant(20));
   parametricPattern.setEquationForXOrTheta(binaryEquation(theta));
 
   const r = new Model.ParametricPattern.Equation.BinaryEquation();
-  r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryEquationType.MULTIPLY);
+  r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.MULTIPLY);
   r.setEquationLeft(variable());
   r.setEquationRight(constant(0.00019));
   parametricPattern.setEquationForYOrR(binaryEquation(r));
@@ -70,19 +70,19 @@ function targetPattern() {
   parametricPattern.setType(Model.ParametricPattern.Type.POLAR);
 
   const theta = new Model.ParametricPattern.Equation.BinaryEquation();
-  theta.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryEquationType.DIVIDE);
+  theta.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.DIVIDE);
   theta.setEquationLeft(variable());
   theta.setEquationRight(constant(-20));
   parametricPattern.setEquationForXOrTheta(binaryEquation(theta));
 
   const r = new Model.ParametricPattern.Equation.BinaryEquation();
-  r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryEquationType.SUBTRACT);
+  r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.SUBTRACT);
   r.setEquationLeft(constant(0.95));
   const subR = new Model.ParametricPattern.Equation.BinaryEquation();
-  subR.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryEquationType.MULTIPLY);
+  subR.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.MULTIPLY);
   subR.setEquationLeft(variable());
   subR.setEquationRight(constant(0.00019));
-  r.setEquationRight(subR);
+  r.setEquationRight(binaryEquation(subR));
   parametricPattern.setEquationForYOrR(binaryEquation(r));
 
   storedPattern.setParametric(parametricPattern);
@@ -92,14 +92,15 @@ function targetPattern() {
 
 class InitializingPatternIterator extends AbstractPatternIterator {
   constructor(pattern) {
-    this.target = 0;
+    super();
+		this.target = 0;
     this.current = 0;
     this.stage = INITIALIZING_STAGE_ZEROING;
     this.zeroCount = 0;
     this.centerSteps = 0;
     this.complete = false;
-    this.clearingPattern = new EnqueuedPatternIterator(sweepPattern());
-    this.targetingPattern = new EnqueuedPatternIterator(targetPattern());
+    this.clearingPattern = sweepPattern();
+    this.targetingPattern = targetPattern();
 
     if (pattern.getPathSegmentList().length < 1) {
       return;
