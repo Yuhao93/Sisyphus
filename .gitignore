@@ -3,3 +3,4 @@ gen/*
 web/*
 node_modules/*
 nohup.out
+node/auth.json

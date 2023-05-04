@@ -17,7 +17,7 @@ message GetLedIntensityResponse {
 }
 
 message InsertPatternRequest {
-  optional StoredPattern pattern = 1;
+  optional string pattern = 1;
   optional int32 position = 2;
 }
 
@@ -28,14 +28,14 @@ message DeletePatternRequest {
 }
 
 message DeletePatternResponse {
-  optional StoredPattern pattern = 1;
+  optional string pattern = 1;
 }
 
 message GetPatternsRequest {}
 
 message GetPatternsResponse {
-  repeated StoredPattern upcoming_patterns = 1;
-  repeated StoredPattern past_patterns = 2;
+  repeated string upcoming_patterns = 1;
+  repeated string past_patterns = 2;
 }
 
 service SisyphusService {
