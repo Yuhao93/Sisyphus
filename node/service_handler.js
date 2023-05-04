@@ -1,32 +1,39 @@
+const Model = require('./gen/model_pb');
 const Server = require('./gen/server_pb');
 const Led = require('./led');
 const SisyphusUtil = require('./sisyphus_util');
+const Firebase = require('./firebase');
 
-function handleSetLedIntesity(request, patternManager) {
+async function handleSetLedIntesity(request, patternManager) {
   Led.setIntensity(request.getIntensity());
   return new Server.SetLedIntensityResponse();
 }
 
-function handleGetLedIntensity(request, patternManager) {
+async function handleGetLedIntensity(request, patternManager) {
   const response = new Server.GetLedIntensityResponse();
   response.setIntensity(Led.getIntensity());
   return response;
 }
 
-function handleInsertPattern(request, patternManager) {
+async function handleInsertPattern(request, patternManager) {
+	const id = request.getPattern();
+	const patternB64 = await Firebase.getPattern(id);
+	const patternBuffer = Buffer.from(patternB64, 'base64');
+	const storedPattern = Model.StoredPattern.deserializeBinary(patternBuffer);	
+
   patternManager.queuePattern(
-      SisyphusUtil.storedPatternToPattern(request.getPattern()));
+      SisyphusUtil.storedPatternToPattern(storedPattern), id);
   return new Server.InsertPatternResponse();
 }
 
-function handleDeletePattern(request, patternManager) {
+async function handleDeletePattern(request, patternManager) {
   return new Server.DeletePatternResponse();
 }
 
-function handleGetPatterns(request, patternManager) {
+async function handleGetPatterns(request, patternManager) {
   const response = new Server.GetPatternsResponse();
   for (const pattern of patternManager.listPatterns()) {
-    response.addUpcomingPatterns(SisyphusUtil.patternToPolarStoredPattern(pattern));
+		response.addUpcomingPatterns(pattern.id);
   }
   return response;
 }
@@ -44,13 +51,13 @@ const serviceMap = {
       [Server.GetPatternsRequest, handleGetPatterns],
 };
 
-function handle(signature, requestBinary, patternManager) {
+async function handle(signature, requestBinary, patternManager) {
   const handler = serviceMap[signature];
   if (!handler) {
     return new Uint8Array([1]);
   }
   const request = handler[0].deserializeBinary(requestBinary);
-  const response = handler[1](request, patternManager);
+  const response = await handler[1](request, patternManager);
   return response.serializeBinary();
 }
 

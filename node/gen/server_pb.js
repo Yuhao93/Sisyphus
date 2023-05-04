@@ -764,7 +764,7 @@ proto.sisyphus.InsertPatternRequest.prototype.toObject = function(opt_includeIns
  */
 proto.sisyphus.InsertPatternRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pattern: (f = msg.getPattern()) && model_pb.StoredPattern.toObject(includeInstance, f),
+    pattern: (f = jspb.Message.getField(msg, 1)) == null ? undefined : f,
     position: (f = jspb.Message.getField(msg, 2)) == null ? undefined : f
   };
 
@@ -803,8 +803,7 @@ proto.sisyphus.InsertPatternRequest.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new model_pb.StoredPattern;
-      reader.readMessage(value,model_pb.StoredPattern.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.setPattern(value);
       break;
     case 2:
@@ -840,12 +839,11 @@ proto.sisyphus.InsertPatternRequest.prototype.serializeBinary = function() {
  */
 proto.sisyphus.InsertPatternRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getPattern();
+  f = /** @type {string} */ (jspb.Message.getField(message, 1));
   if (f != null) {
-    writer.writeMessage(
+    writer.writeString(
       1,
-      f,
-      model_pb.StoredPattern.serializeBinaryToWriter
+      f
     );
   }
   f = /** @type {number} */ (jspb.Message.getField(message, 2));
@@ -859,30 +857,29 @@ proto.sisyphus.InsertPatternRequest.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional StoredPattern pattern = 1;
- * @return {?proto.sisyphus.StoredPattern}
+ * optional string pattern = 1;
+ * @return {string}
  */
 proto.sisyphus.InsertPatternRequest.prototype.getPattern = function() {
-  return /** @type{?proto.sisyphus.StoredPattern} */ (
-    jspb.Message.getWrapperField(this, model_pb.StoredPattern, 1));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * @param {?proto.sisyphus.StoredPattern|undefined} value
+ * @param {string} value
  * @return {!proto.sisyphus.InsertPatternRequest} returns this
-*/
+ */
 proto.sisyphus.InsertPatternRequest.prototype.setPattern = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * Clears the field making it undefined.
  * @return {!proto.sisyphus.InsertPatternRequest} returns this
  */
 proto.sisyphus.InsertPatternRequest.prototype.clearPattern = function() {
-  return this.setPattern(undefined);
+  return jspb.Message.setField(this, 1, undefined);
 };
 
 
@@ -1212,7 +1209,7 @@ proto.sisyphus.DeletePatternResponse.prototype.toObject = function(opt_includeIn
  */
 proto.sisyphus.DeletePatternResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    pattern: (f = msg.getPattern()) && model_pb.StoredPattern.toObject(includeInstance, f)
+    pattern: (f = jspb.Message.getField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1250,8 +1247,7 @@ proto.sisyphus.DeletePatternResponse.deserializeBinaryFromReader = function(msg,
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new model_pb.StoredPattern;
-      reader.readMessage(value,model_pb.StoredPattern.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.setPattern(value);
       break;
     default:
@@ -1283,42 +1279,40 @@ proto.sisyphus.DeletePatternResponse.prototype.serializeBinary = function() {
  */
 proto.sisyphus.DeletePatternResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getPattern();
+  f = /** @type {string} */ (jspb.Message.getField(message, 1));
   if (f != null) {
-    writer.writeMessage(
+    writer.writeString(
       1,
-      f,
-      model_pb.StoredPattern.serializeBinaryToWriter
+      f
     );
   }
 };
 
 
 /**
- * optional StoredPattern pattern = 1;
- * @return {?proto.sisyphus.StoredPattern}
+ * optional string pattern = 1;
+ * @return {string}
  */
 proto.sisyphus.DeletePatternResponse.prototype.getPattern = function() {
-  return /** @type{?proto.sisyphus.StoredPattern} */ (
-    jspb.Message.getWrapperField(this, model_pb.StoredPattern, 1));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * @param {?proto.sisyphus.StoredPattern|undefined} value
+ * @param {string} value
  * @return {!proto.sisyphus.DeletePatternResponse} returns this
-*/
+ */
 proto.sisyphus.DeletePatternResponse.prototype.setPattern = function(value) {
-  return jspb.Message.setWrapperField(this, 1, value);
+  return jspb.Message.setField(this, 1, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * Clears the field making it undefined.
  * @return {!proto.sisyphus.DeletePatternResponse} returns this
  */
 proto.sisyphus.DeletePatternResponse.prototype.clearPattern = function() {
-  return this.setPattern(undefined);
+  return jspb.Message.setField(this, 1, undefined);
 };
 
 
@@ -1471,10 +1465,8 @@ proto.sisyphus.GetPatternsResponse.prototype.toObject = function(opt_includeInst
  */
 proto.sisyphus.GetPatternsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    upcomingPatternsList: jspb.Message.toObjectList(msg.getUpcomingPatternsList(),
-    model_pb.StoredPattern.toObject, includeInstance),
-    pastPatternsList: jspb.Message.toObjectList(msg.getPastPatternsList(),
-    model_pb.StoredPattern.toObject, includeInstance)
+    upcomingPatternsList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
+    pastPatternsList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1512,13 +1504,11 @@ proto.sisyphus.GetPatternsResponse.deserializeBinaryFromReader = function(msg, r
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new model_pb.StoredPattern;
-      reader.readMessage(value,model_pb.StoredPattern.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.addUpcomingPatterns(value);
       break;
     case 2:
-      var value = new model_pb.StoredPattern;
-      reader.readMessage(value,model_pb.StoredPattern.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.addPastPatterns(value);
       break;
     default:
@@ -1552,49 +1542,46 @@ proto.sisyphus.GetPatternsResponse.serializeBinaryToWriter = function(message, w
   var f = undefined;
   f = message.getUpcomingPatternsList();
   if (f.length > 0) {
-    writer.writeRepeatedMessage(
+    writer.writeRepeatedString(
       1,
-      f,
-      model_pb.StoredPattern.serializeBinaryToWriter
+      f
     );
   }
   f = message.getPastPatternsList();
   if (f.length > 0) {
-    writer.writeRepeatedMessage(
+    writer.writeRepeatedString(
       2,
-      f,
-      model_pb.StoredPattern.serializeBinaryToWriter
+      f
     );
   }
 };
 
 
 /**
- * repeated StoredPattern upcoming_patterns = 1;
- * @return {!Array<!proto.sisyphus.StoredPattern>}
+ * repeated string upcoming_patterns = 1;
+ * @return {!Array<string>}
  */
 proto.sisyphus.GetPatternsResponse.prototype.getUpcomingPatternsList = function() {
-  return /** @type{!Array<!proto.sisyphus.StoredPattern>} */ (
-    jspb.Message.getRepeatedWrapperField(this, model_pb.StoredPattern, 1));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
 };
 
 
 /**
- * @param {!Array<!proto.sisyphus.StoredPattern>} value
+ * @param {!Array<string>} value
  * @return {!proto.sisyphus.GetPatternsResponse} returns this
-*/
+ */
 proto.sisyphus.GetPatternsResponse.prototype.setUpcomingPatternsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setField(this, 1, value || []);
 };
 
 
 /**
- * @param {!proto.sisyphus.StoredPattern=} opt_value
+ * @param {string} value
  * @param {number=} opt_index
- * @return {!proto.sisyphus.StoredPattern}
+ * @return {!proto.sisyphus.GetPatternsResponse} returns this
  */
-proto.sisyphus.GetPatternsResponse.prototype.addUpcomingPatterns = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.sisyphus.StoredPattern, opt_index);
+proto.sisyphus.GetPatternsResponse.prototype.addUpcomingPatterns = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
 };
 
 
@@ -1608,31 +1595,30 @@ proto.sisyphus.GetPatternsResponse.prototype.clearUpcomingPatternsList = functio
 
 
 /**
- * repeated StoredPattern past_patterns = 2;
- * @return {!Array<!proto.sisyphus.StoredPattern>}
+ * repeated string past_patterns = 2;
+ * @return {!Array<string>}
  */
 proto.sisyphus.GetPatternsResponse.prototype.getPastPatternsList = function() {
-  return /** @type{!Array<!proto.sisyphus.StoredPattern>} */ (
-    jspb.Message.getRepeatedWrapperField(this, model_pb.StoredPattern, 2));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 2));
 };
 
 
 /**
- * @param {!Array<!proto.sisyphus.StoredPattern>} value
+ * @param {!Array<string>} value
  * @return {!proto.sisyphus.GetPatternsResponse} returns this
-*/
+ */
 proto.sisyphus.GetPatternsResponse.prototype.setPastPatternsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setField(this, 2, value || []);
 };
 
 
 /**
- * @param {!proto.sisyphus.StoredPattern=} opt_value
+ * @param {string} value
  * @param {number=} opt_index
- * @return {!proto.sisyphus.StoredPattern}
+ * @return {!proto.sisyphus.GetPatternsResponse} returns this
  */
-proto.sisyphus.GetPatternsResponse.prototype.addPastPatterns = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.sisyphus.StoredPattern, opt_index);
+proto.sisyphus.GetPatternsResponse.prototype.addPastPatterns = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
 };
 
 

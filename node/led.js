@@ -5,7 +5,7 @@ let v;
 function setIntensity(intensity) {
   v = Math.max(Math.min(1, intensity), 0);
   const valueInRange = Math.floor(gpio.GPIO_LED_RANGE * v);
-  gpio.pwmWrite(valueInRange);
+  gpio.pwmWrite(gpio.GPIO_LED, valueInRange);
 }
 
 function getIntensity() {

@@ -13,9 +13,9 @@ class PatternManager {
     Gpio.setup();
   }
 
-  queuePattern(pattern) {
+  queuePattern(pattern, id) {
     this.patterns.push(new InitializingPatternIterator(pattern));
-    this.patterns.push(new EnqueuedPatternIterator(pattern));
+    this.patterns.push(new EnqueuedPatternIterator(pattern, id));
   }
 
   listPatterns() {

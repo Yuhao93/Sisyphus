@@ -73,21 +73,21 @@ async function onWriteRequest(data, offset, withoutResponse, callback) {
     const request = JSON.parse(writeBuffer);
     writeBuffer = '';
 		const payload = Buffer.from(request.payload, 'base64');
-    const content = ServiceHandler.handle(request.type, payload, p);
+    const content = await ServiceHandler.handle(request.type, payload, p);
     resultCallback(content);
 	}
   callback(bleno.Characteristic.RESULT_SUCCESS);
 }
 
-async function onReadRequest() {
+async function onReadRequest(offset, callback) {
 	console.log('Bluetooth received Read');
 
   const data = await result;
-  callback = null;
   result = createResultPromise();
   clearWrites.shift()();
   pendingWrite = null;
-  return data;
+	console.log('Bluetooth read complete ' + data.length + 'bytes');
+	callback(bleno.Characteristic.RESULT_SUCCESS, data);
 }
 
 async function initializeBluetooth(patternManager) {

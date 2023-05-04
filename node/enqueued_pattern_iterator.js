@@ -146,8 +146,9 @@ function getDirection(reverse) {
 }
 
 class EnqueuedPatternIterator extends AbstractPatternIterator {
-  constructor(pattern) {
+  constructor(pattern, id) {
     this.p = pattern;
+		this.id = id;
     this.currentSegment = null;
     this.segmentIndex = 0;
     this.octant = 0;
@@ -177,7 +178,10 @@ class EnqueuedPatternIterator extends AbstractPatternIterator {
   }
 
   pattern() {
-    return this.p;
+    return {
+			pattern: this.p,
+			id: this.id
+		};
   }
 
   hasNext() {
