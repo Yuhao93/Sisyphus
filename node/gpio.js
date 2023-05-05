@@ -1,4 +1,5 @@
 const rpio  = require('rpio');
+const pwm = require('rpio-pwm');
 
 const GPIO_STEPPER_MOTORS_LINEAR_STEP = 11;
 const GPIO_STEPPER_MOTORS_LINEAR_DIR = 13;
@@ -14,12 +15,16 @@ const GPIO_STEPPER_MOTORS_ANGLE_MODE_3 = 28;
 
 const GPIO_LINEAR_FEEDBACK = 22;
 
-/** NOTE: HAD  TO CHANGE FROM 15 TO 12 */
-const GPIO_LED = 12;
-const GPIO_LED_RANGE = 512;
+/** NOTE: GPIO 22 -> Physical 15 */
+const GPIO_LED = 22;
+const GPIO_LED_RANGE = 100;
+const GPIO_LED_PERIOD_US = 5000;
 
 const linear_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
 const angle_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
+
+let pwmChannel;
+let pwmPin;
 
 function setup() {
   rpio.init({
@@ -36,10 +41,13 @@ function setup() {
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_2, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_3, rpio.OUTPUT);
   rpio.open(GPIO_LINEAR_FEEDBACK, rpio.INPUT);
-  rpio.open(GPIO_LED, rpio.PWM)
-  rpio.pwmSetClockDivider(256);
-  rpio.pwmSetRange(GPIO_LED, GPIO_LED_RANGE);
-
+ 
+	pwmChannel = pwm.create_dma_channel(14, {
+		cycle_time_us: GPIO_LED_PERIOD_US,
+		step_time_us: GPIO_LED_PERIOD_US / GPIO_LED_RANGE,
+	});
+	pwmPin = pwmChannel.create_pwm(GPIO_LED);
+ 
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_1, angle_mode[0]);
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_2, angle_mode[1]);
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_3, angle_mode[2]);
@@ -49,7 +57,7 @@ function setup() {
 }
 
 function pwmWrite(pin, value) {
-  rpio.pwmSetData(pin, value);
+	pwmPin.set_width(value)
 }
 
 function write(pin, value) {
