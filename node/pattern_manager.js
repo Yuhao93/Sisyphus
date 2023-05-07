@@ -42,6 +42,7 @@ class PatternManager {
       }
     }
     if (this.patterns.length > 0) {
+			console.log('stepping');
       this.stepperMotors.step(this.patterns[0].next());
     }
   }
