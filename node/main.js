@@ -5,7 +5,7 @@ const patternManager = new PatternManager();
 BluetoothThread.initializeBluetooth(patternManager);
 
 async function doPatternLoop() {
-  patternManager.step();
+  await patternManager.step();
   setImmediate(doPatternLoop);
 }
 

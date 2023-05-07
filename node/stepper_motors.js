@@ -1,3 +1,4 @@
+const rpio = require('rpio');
 const Gpio = require('./gpio');
 const Model = require('./gen/model_pb');
 
@@ -34,8 +35,8 @@ class StepperMotors {
     prepare(Gpio.GPIO_STEPPER_MOTORS_LINEAR_DIR, linearMovement);
     begin(Gpio.GPIO_STEPPER_MOTORS_ANGLE_STEP, angularMovement);
     begin(Gpio.GPIO_STEPPER_MOTORS_LINEAR_STEP, linearMovement);
-    await sleepMs(1);
-    end(Gpio.GPIO_STEPPER_MOTORS_ANGLE_STEP, angularMovement);
+    rpio.msleep(1);
+		end(Gpio.GPIO_STEPPER_MOTORS_ANGLE_STEP, angularMovement);
     end(Gpio.GPIO_STEPPER_MOTORS_LINEAR_STEP, linearMovement);
   }
 }

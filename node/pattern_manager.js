@@ -28,7 +28,7 @@ class PatternManager {
     return patternsCopy;
   }
 
-  step() {
+  async step() {
     if (this.patterns.length == 0) {
       return;
     }
@@ -42,8 +42,7 @@ class PatternManager {
       }
     }
     if (this.patterns.length > 0) {
-			console.log('stepping');
-      this.stepperMotors.step(this.patterns[0].next());
+      await this.stepperMotors.step(this.patterns[0].next());
     }
   }
 }

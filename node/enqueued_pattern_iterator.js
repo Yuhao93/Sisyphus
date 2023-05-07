@@ -15,7 +15,7 @@ function octantFromSegment(segment) {
   return Math.floor(angle);
 }
 
-function isFlipped(octant) {
+function getIsFlipped(octant) {
   switch(octant) {
     case 1:
     case 2:
@@ -194,7 +194,7 @@ class EnqueuedPatternIterator extends AbstractPatternIterator {
   }
 
   next() {
-    const isFlipped = isFlipped(this.octant);
+    const isFlipped = getIsFlipped(this.octant);
 
     const directions = {
       aDir: Model.Step.Movement.STOP,

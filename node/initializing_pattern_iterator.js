@@ -118,7 +118,6 @@ class InitializingPatternIterator extends AbstractPatternIterator {
     const step = new Model.Step();
     step.setAngularMovement(Model.Step.Movement.STOP);
     step.setLinearMovement(Model.Step.Movement.STOP);
-
     switch (this.stage) {
       case INITIALIZING_STAGE_ZEROING:
         if (Gpio.read(Gpio.GPIO_LINEAR_FEEDBACK) == Gpio.LOW) {
