@@ -39,7 +39,7 @@ function sweepPattern() {
   const storedPattern = new Model.StoredPattern();
   const parametricPattern = new Model.ParametricPattern();
   parametricPattern.setStartT(0);
-  parametricPattern.setEndT(5000);
+  parametricPattern.setEndT(1800);
   parametricPattern.setTStep(1);
   parametricPattern.setType(Model.ParametricPattern.Type.POLAR);
 
@@ -52,7 +52,7 @@ function sweepPattern() {
   const r = new Model.ParametricPattern.Equation.BinaryEquation();
   r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.MULTIPLY);
   r.setEquationLeft(variable());
-  r.setEquationRight(constant(0.00019));
+  r.setEquationRight(constant(0.0005));
   parametricPattern.setEquationForYOrR(binaryEquation(r));
 
   storedPattern.setParametric(parametricPattern);
@@ -65,7 +65,7 @@ function targetPattern() {
   const storedPattern = new Model.StoredPattern();
   const parametricPattern = new Model.ParametricPattern();
   parametricPattern.setStartT(0);
-  parametricPattern.setEndT(5000);
+  parametricPattern.setEndT(1800);
   parametricPattern.setTStep(1);
   parametricPattern.setType(Model.ParametricPattern.Type.POLAR);
 
@@ -77,11 +77,11 @@ function targetPattern() {
 
   const r = new Model.ParametricPattern.Equation.BinaryEquation();
   r.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.SUBTRACT);
-  r.setEquationLeft(constant(0.95));
+  r.setEquationLeft(constant(0.9));
   const subR = new Model.ParametricPattern.Equation.BinaryEquation();
   subR.setOperation(Model.ParametricPattern.Equation.BinaryEquation.BinaryOperationType.MULTIPLY);
   subR.setEquationLeft(variable());
-  subR.setEquationRight(constant(0.00019));
+  subR.setEquationRight(constant(0.0005));
   r.setEquationRight(binaryEquation(subR));
   parametricPattern.setEquationForYOrR(binaryEquation(r));
 
