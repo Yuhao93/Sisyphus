@@ -32,7 +32,7 @@ function evaluateBinaryEquation(t, binaryEquation) {
       if (left == 0 || (right == 0 && left <= 0) || (right < 0 && left != Math.abs(left))) {
         return 0;
       }
-      return pow(right, 1 / left);
+      return Math.pow(right, 1 / left);
     case Equation.BinaryEquation.BinaryOperationType.LOG:
       if (left <= 0 || right <= 0 || left == 1) {
         return 0;
