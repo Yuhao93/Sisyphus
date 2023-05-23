@@ -27,7 +27,7 @@ function evaluateBinaryEquation(t, binaryEquation) {
     case Equation.BinaryEquation.BinaryOperationType.DIVIDE:
       return left / right;
     case Equation.BinaryEquation.BinaryOperationType.POWER:
-      return Mathy.pow(left, right);
+      return Math.pow(left, right);
     case Equation.BinaryEquation.BinaryOperationType.ROOT:
       if (left == 0 || (right == 0 && left <= 0) || (right < 0 && left != Math.abs(left))) {
         return 0;
