@@ -6,13 +6,11 @@ const GPIO_STEPPER_MOTORS_ANGLE_STEP = 11;
 const GPIO_STEPPER_MOTORS_ANGLE_DIR = 13;
 const GPIO_STEPPER_MOTORS_ANGLE_MODE_1 = 19;
 const GPIO_STEPPER_MOTORS_ANGLE_MODE_2 = 21;
-const GPIO_STEPPER_MOTORS_ANGLE_MODE_3 = 23;
 
 const GPIO_STEPPER_MOTORS_LINEAR_STEP = 16;
 const GPIO_STEPPER_MOTORS_LINEAR_DIR = 18;
 const GPIO_STEPPER_MOTORS_LINEAR_MODE_1 = 24;
 const GPIO_STEPPER_MOTORS_LINEAR_MODE_2 = 26;
-const GPIO_STEPPER_MOTORS_LINEAR_MODE_3 = 28;
 
 const GPIO_LINEAR_FEEDBACK = 22;
 
@@ -21,8 +19,8 @@ const GPIO_LED = 22;
 const GPIO_LED_RANGE = 100;
 const GPIO_LED_PERIOD_US = 5000;
 
-const linear_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
-const angle_mode = [rpio.HIGH, rpio.HIGH, rpio.HIGH];
+const linear_mode = [rpio.HIGH, rpio.HIGH];
+const angle_mode = [rpio.HIGH, rpio.HIGH];
 
 let pwmChannel;
 let pwmPin;
@@ -35,12 +33,10 @@ function setup() {
   rpio.open(GPIO_STEPPER_MOTORS_ANGLE_DIR, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_ANGLE_MODE_1, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_ANGLE_MODE_2, rpio.OUTPUT);
-  rpio.open(GPIO_STEPPER_MOTORS_ANGLE_MODE_3, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_STEP, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_DIR, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_1, rpio.OUTPUT);
   rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_2, rpio.OUTPUT);
-  rpio.open(GPIO_STEPPER_MOTORS_LINEAR_MODE_3, rpio.OUTPUT);
   rpio.open(GPIO_LINEAR_FEEDBACK, rpio.INPUT);
  
 	pwmChannel = pwm.create_dma_channel(14, {
@@ -51,10 +47,8 @@ function setup() {
  
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_1, angle_mode[0]);
   rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_2, angle_mode[1]);
-  rpio.write(GPIO_STEPPER_MOTORS_ANGLE_MODE_3, angle_mode[2]);
   rpio.write(GPIO_STEPPER_MOTORS_LINEAR_MODE_1, linear_mode[0]);
   rpio.write(GPIO_STEPPER_MOTORS_LINEAR_MODE_2, linear_mode[1]);
-  rpio.write(GPIO_STEPPER_MOTORS_LINEAR_MODE_3, linear_mode[2]);
 }
 
 function pwmWrite(pin, value) {
