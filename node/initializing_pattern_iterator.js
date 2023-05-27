@@ -8,7 +8,8 @@ const SisyphusUtil = require('./sisyphus_util');
 const INITIALIZING_STAGE_ZEROING = 1;
 const INITIALIZING_STAGE_CENTERING = 2;
 const INITIALIZING_STAGE_CLEARING = 3;
-const INITIALIZING_STAGE_TARGETING = 4;
+const INITIALIZING_STAGE_EXTENDING = 4;
+const INITIALIZING_STAGE_TARGETING = 5;
 
 const ZEROING_THRESHOLD = 100;
 
@@ -108,6 +109,7 @@ class InitializingPatternIterator extends AbstractPatternIterator {
     this.clearingPattern.reset();
     this.targetingPattern.reset();
     this.target = pattern.getPathSegmentList()[0].getStart().getLinearValue();
+    this.end = this.targetingPattern.getPathSegmentList()[0].getStart().getLinearValue();
   }
 
   hasNext() {
@@ -138,13 +140,25 @@ class InitializingPatternIterator extends AbstractPatternIterator {
         }
         break;
       case INITIALIZING_STAGE_CLEARING:
-        if (this.clearingPattern.hasNext()) {
-          const s = this.clearingPattern.next();
-          step.setLinearMovement(s.getLinearMovement());
-          step.setAngularMovement(s.getAngularMovement());
-          if (s.getLinearMovement() == Model.Step.Movement.FORWARDS) {
-            this.current++;
-          }
+        if (!this.clearingPattern.hasNext()) {
+          console.log("TARGETING");
+          this.stage = INITIALIZING_STAGE_EXTENDING;
+        }
+        const clearStep = this.clearingPattern.next();
+        step.setLinearMovement(clearStep.getLinearMovement());
+        step.setAngularMovement(clearStep.getAngularMovement());
+        if (clearStep.getLinearMovement() == Model.Step.Movement.FORWARDS) {
+          this.current++;
+        }
+        if (this.current >= this.target) {
+          console.log("EXTENDING");
+          this.stage = INITIALIZING_STAGE_EXTENDING;
+        }
+        break;
+      case INITIALIZING_STAGE_EXTENDING:
+        if (this.current <= this.end) {
+          step.setLinearMovement(Model.Step.Movement.FORWARDS);
+          this.current++;
         } else {
           console.log("TARGETING");
           this.stage = INITIALIZING_STAGE_TARGETING;
@@ -156,10 +170,10 @@ class InitializingPatternIterator extends AbstractPatternIterator {
           this.complete = true;
           break;
         }
-        const s = this.targetingPattern.next();
-        step.setLinearMovement(s.getLinearMovement());
-        step.setAngularMovement(s.getAngularMovement());
-        if (s.getLinearMovement() == Model.Step.Movement.BACKWARDS) {
+        const targetStep = this.targetingPattern.next();
+        step.setLinearMovement(targetStep.getLinearMovement());
+        step.setAngularMovement(targetStep.getAngularMovement());
+        if (targetStep.getLinearMovement() == Model.Step.Movement.BACKWARDS) {
           this.current--;
         }
         if (this.current <= this.target) {
