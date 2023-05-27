@@ -109,7 +109,7 @@ class InitializingPatternIterator extends AbstractPatternIterator {
     this.clearingPattern.reset();
     this.targetingPattern.reset();
     this.target = pattern.getPathSegmentList()[0].getStart().getLinearValue();
-    this.end = this.targetingPattern.getPathSegmentList()[0].getStart().getLinearValue();
+    this.end = this.targetingPattern.pattern().pattern.getPathSegmentList()[0].getStart().getLinearValue();
   }
 
   hasNext() {
