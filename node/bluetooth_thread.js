@@ -1,9 +1,15 @@
-const bleno = require('bleno');
+const {compatRequire} = require('./compat_require');
+const bleno = compatRequire('bleno');
 const ServiceHandler = require('./service_handler');
+const Server = require('./gen/server_pb');
+const os = require('./os');
+const rl = require("readline").createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 const name = 'Sisyphus Table';
 const serviceUuid = '6d081fa1965e48e79aec2d122334954b';
-const textDecoder = new TextDecoder();
 
 let p = null;
 let resultCallback = null;
@@ -12,9 +18,6 @@ let clearWrites = [];
 let writeAuthor = null;
 let writeComplete = false;
 let writeBuffer = '';
-
-let readComplete = false;
-let readBuffer = null;
 
 function createResultPromise() {
   return new Promise((resolve, reject) => {
@@ -91,8 +94,12 @@ async function onReadRequest(offset, callback) {
 }
 
 async function initializeBluetooth(patternManager) {
-	await poweredOn;
   p = patternManager;
+
+  if (os.isWindows()) {
+    fakeRpc();
+  }
+	await poweredOn;
 
   const rpcRequestCharacteristic = new bleno.Characteristic({
     uuid: 'fff0',
@@ -119,6 +126,15 @@ async function initializeBluetooth(patternManager) {
   bleno.setServices([primaryService]);
   bleno.startAdvertising(name, [serviceUuid]);
 	console.log('Bluetooth Advertising Started');
+}
+
+function fakeRpc() {
+  rl.question('Pattern id to insert:', async (id) => {
+    console.log(id);
+    const req = new Server.InsertPatternRequest();
+    req.setPattern(id);
+    await ServiceHandler.handle('sisyphus.SisyphusService.InsertPattern', req.serializeBinary(), p);
+  });
 }
 
 module.exports = { initializeBluetooth };

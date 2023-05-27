@@ -1,5 +1,6 @@
-const rpio  = require('rpio');
-const pwm = require('rpio-pwm');
+const {compatRequire} = require('./compat_require');
+const rpio  = compatRequire('rpio');
+const pwm = compatRequire('rpio-pwm');
 
 
 const GPIO_STEPPER_MOTORS_ANGLE_STEP = 11;

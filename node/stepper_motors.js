@@ -1,4 +1,5 @@
-const rpio = require('rpio');
+const {compatRequire} = require('./compat_require');
+const rpio = compatRequire('rpio');
 const Gpio = require('./gpio');
 const Model = require('./gen/model_pb');
 

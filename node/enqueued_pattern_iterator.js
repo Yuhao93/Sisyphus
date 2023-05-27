@@ -217,8 +217,8 @@ class EnqueuedPatternIterator extends AbstractPatternIterator {
       this[angularValue] -= (ANGULAR_STEPS_PER_REVOLUTION * (angle / ANGULAR_STEPS_PER_REVOLUTION));
     }
     let {a, l} = getALWithOctant(this.octant, this.x, this.y);
-    if (a < 0) {
-      a += (ANGULAR_STEPS_PER_REVOLUTION * ((-a / ANGULAR_STEPS_PER_REVOLUTION) + 1));
+    while (a < 0) {
+      a += ANGULAR_STEPS_PER_REVOLUTION;
     }
     const targetA = this.currentSegment.getEnd().getAngularValue();
     const targetL = this.currentSegment.getEnd().getLinearValue();
@@ -233,7 +233,6 @@ class EnqueuedPatternIterator extends AbstractPatternIterator {
         this.initializeSegment(this.currentSegment);
       }
     }
-    
     return step;
   }
 }

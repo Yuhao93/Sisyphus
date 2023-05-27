@@ -123,6 +123,7 @@ class InitializingPatternIterator extends AbstractPatternIterator {
     switch (this.stage) {
       case INITIALIZING_STAGE_ZEROING:
         if (Gpio.read(Gpio.GPIO_LINEAR_FEEDBACK) == Gpio.LOW) {
+          console.log("BACKING");
           this.zeroCount = 0;
           step.setLinearMovement(Model.Step.Movement.BACKWARDS);
         } else if (++this.zeroCount == ZEROING_THRESHOLD) {

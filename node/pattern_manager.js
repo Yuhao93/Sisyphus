@@ -2,6 +2,7 @@ const StepperMotors = require('./stepper_motors');
 const Gpio = require('./gpio');
 const EnqueuedPatternIterator = require('./enqueued_pattern_iterator');
 const InitializingPatternIterator = require('./initializing_pattern_iterator');
+const os = require('./os');
 
 const MAX_HISTORY = 10;
 
@@ -14,7 +15,9 @@ class PatternManager {
   }
 
   queuePattern(pattern, id) {
-    this.patterns.push(new InitializingPatternIterator(pattern));
+    if (!os.isWindows()) {
+      this.patterns.push(new InitializingPatternIterator(pattern));
+    }
     this.patterns.push(new EnqueuedPatternIterator(pattern, id));
   }
 
