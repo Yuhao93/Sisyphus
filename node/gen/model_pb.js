@@ -3085,7 +3085,10 @@ proto.sisyphus.ParametricPattern.Equation.UnaryEquation.UnaryOperationType = {
   NEGATIVE: 7,
   STEP: 8,
   SIGN: 9,
-  ABS: 10
+  ABS: 10,
+  FLOOR: 11,
+  CEIL: 12,
+  ROUND: 13
 };
 
 goog.object.extend(exports, proto.sisyphus);

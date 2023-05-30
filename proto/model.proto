@@ -98,6 +98,9 @@ message ParametricPattern {
         STEP = 8;
         SIGN = 9;
         ABS = 10;
+        FLOOR = 11;
+        CEIL = 12;
+        ROUND = 13;
       }
       optional Equation equation = 1;
       optional UnaryOperationType operation = 2;

@@ -66,6 +66,12 @@ function evaluateUnaryEquation(t, unaryEquation) {
       return subValue == 0 ? 0 : (subValue > 0 ? 1 : -1);
     case Equation.UnaryEquation.UnaryOperationType.ABS:
       return Math.abs(subValue);
+    case Equation.UnaryEquation.UnaryOperationType.FLOOR:
+      return Math.floor(subValue);
+    case Equation.UnaryEquation.UnaryOperationType.CEIL:
+      return Math.ceil(subValue);
+    case Equation.UnaryEquation.UnaryOperationType.ROUND:
+      return Math.round(subValue);
   }
 }
 

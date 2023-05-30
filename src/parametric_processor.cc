@@ -79,6 +79,12 @@ double EvaluateUnaryEquation(int t, const ParametricPattern_Equation_UnaryEquati
       return sub_value == 0 ? 0 : (sub_value > 0 ? 1 : -1);
     case ParametricPattern_Equation_UnaryEquation::ABS:
       return std::abs(sub_value);
+    case ParametricPattern_Equation_UnaryEquation::FLOOR:
+      return floor(sub_value);
+    case ParametricPattern_Equation_UnaryEquation::CEIL:
+      return ceil(sub_value);
+    case ParametricPattern_Equation_UnaryEquation::ROUND:
+      return round(sub_value);
   }
 }
 
